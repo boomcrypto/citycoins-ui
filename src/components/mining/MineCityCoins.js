@@ -151,7 +151,7 @@ export default function MineCityCoins() {
           postConditionMode: PostConditionMode.Deny,
           postConditions: [
             makeStandardSTXPostCondition(
-              stxAddress,
+              stxAddress.data,
               FungibleConditionCode.Equal,
               totalUstxCV.value
             ),
