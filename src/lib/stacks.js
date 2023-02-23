@@ -8,6 +8,7 @@ import {
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
 import { fetchJson, debugLog } from './common';
 
+// TODO: change to URL and switch against chain if it exists
 export const isTestnet = window.location.search.includes('chain=testnet');
 export const isMocknet = !isTestnet && window.location.search.includes('mocknet=local');
 export const isMainnet =
