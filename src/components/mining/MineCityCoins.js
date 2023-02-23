@@ -123,7 +123,7 @@ export default function MineCityCoins() {
     let mineManyArray = [];
     let totalUstx = 0;
     for (let i = 0; i < numberOfBlocks; i++) {
-      let amount = +blockAmounts[i].amount;
+      let amount = +blockAmounts[i].amount * 1_000_000;
       mineManyArray.push(uintCV(amount));
       totalUstx += amount;
     }
