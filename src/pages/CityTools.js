@@ -12,7 +12,7 @@ export default function CityTools() {
   return !currentCity.loaded ? (
     <NoCitySelected />
   ) : loginStatus ? (
-    <div className="container-fluid p-6">
+    <div className="container-fluid px-lg-5 py-3">
       <h3>Tools</h3>
       <ComingSoon />
     </div>
