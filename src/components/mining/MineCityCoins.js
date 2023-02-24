@@ -239,140 +239,151 @@ export default function MineCityCoins() {
           <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
         ))
       )}
-      <h3 className="mt-5">
-        {`Mine ${symbol} `}
-        <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/mining-citycoins" />
-      </h3>
-      <form>
-        <div className="form-floating">
-          <input
-            className="form-control"
-            placeholder="Number of Blocks to Mine?"
-            ref={mineManyRef}
-            onChange={event => {
-              setNumberOfBlocks(parseInt(event.target.value.trim()));
-              setBlockAmounts([]);
-              updateValue(parseInt(event.target.value.trim()));
-            }}
-            value={numberOfBlocks}
-            type="number"
-            id="mineMany"
-          />
-          <label htmlFor="mineMany">Number of Blocks to Mine?</label>
-        </div>
-        <br />
-        <div className="input-group mb-3" hidden={numberOfBlocks !== 1}>
-          <input
-            type="number"
-            className="form-control"
-            ref={amountRef}
-            aria-label="Amount in STX"
-            placeholder="Amount in STX"
-            required
-            minLength="1"
-          />
-          <div className="input-group-append">
-            <span className="input-group-text">STX</span>
+      <div class="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
+        <h3 className="mt-5">
+          {`Mine ${symbol} `}
+          <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/mining-citycoins" />
+        </h3>
+        <form>
+          <div className="form-floating">
+            <input
+              className="form-control"
+              placeholder="Number of Blocks to Mine?"
+              ref={mineManyRef}
+              onChange={event => {
+                setNumberOfBlocks(parseInt(event.target.value.trim()));
+                setBlockAmounts([]);
+                updateValue(parseInt(event.target.value.trim()));
+              }}
+              value={numberOfBlocks}
+              type="number"
+              id="mineMany"
+            />
+            <label htmlFor="mineMany">Number of Blocks to Mine?</label>
           </div>
-        </div>
-        <input
-          ref={memoRef}
-          className="form-control"
-          type="text"
-          placeholder="Memo (optional)"
-          aria-label="Optional memo field"
-          maxLength="34"
-          hidden={numberOfBlocks !== 1}
-        />
-        <div className="form-check mb-3" hidden={isNaN(numberOfBlocks) || numberOfBlocks === 1}>
-          <input
-            ref={sameAmountForAllRef}
-            className="form-check-input"
-            type="checkbox"
-            value=""
-            id="sameAmountForAll"
-          />
-          <label className="form-check-label" htmlFor="sameAmountForAll">
-            Use same amount for all blocks?
-          </label>
-        </div>
-        <div className="input-group">
-          <div className="row g-2 w-100">
-            {blockAmounts.map(b => {
-              return (
-                <div className="col-md-2 form-floating" key={b.num}>
-                  <input
-                    className="form-control"
-                    id={`miningAmount-${b.num.toString()}`}
-                    onChange={e => {
-                      const amount = e.target.value;
-                      setBlockAmounts(currentBlock =>
-                        currentBlock.map(x =>
-                          x.num === b.num || sameAmountForAllRef.current.checked
-                            ? {
-                                ...x,
-                                amount,
-                              }
-                            : x
-                        )
-                      );
-                    }}
-                    value={b.amount}
-                  />
-                  <label htmlFor={`miningAmount-${b.num.toString()}`}>Block {b.num}</label>
+          <br />
+          <div className="row">
+            <div className="col-lg">
+              <div className="input-group mb-3" hidden={numberOfBlocks !== 1}>
+                <input
+                  type="number"
+                  className="form-control"
+                  ref={amountRef}
+                  aria-label="Amount in STX"
+                  placeholder="Amount in STX"
+                  required
+                  minLength="1"
+                />
+                <div className="input-group-append">
+                  <span className="input-group-text">STX</span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-        <br />
-        <div className="row">
-          <div className="col-lg-3">
-            <button
-              className="btn btn-block btn-primary mb-3"
-              type="button"
-              disabled={isDisabled}
-              onClick={mineAction}
-            >
-              <div
-                role="status"
-                className={`${
-                  loading ? '' : 'd-none'
-                } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
-              />
-              {buttonLabel}
-            </button>
-          </div>
-          <div className="col">
-            <div className="form-check">
+              </div>
+            </div>
+            <div className="col-lg">
               <input
-                className="form-check-input"
-                type="checkbox"
-                value=""
-                id="flexCheckDefault"
-                onClick={onCheckboxClick}
+                ref={memoRef}
+                className="form-control"
+                type="text"
+                placeholder="Memo (optional)"
+                aria-label="Optional memo field"
+                maxLength="34"
+                hidden={numberOfBlocks !== 1}
               />
-              <label className="form-check-label" htmlFor="flexCheckDefault">
-                I confirm that by participating in mining, I understand:
-                <ul>
-                  {symbol !== 'MIA' && <li>the city has not claimed the protocol contribution</li>}
-                  <li>
-                    participation does not guarantee winning the rights to claim newly minted{' '}
-                    {symbol}
-                  </li>
-                  <li>once STX are sent to the contract, they are not returned</li>
-                </ul>
-              </label>
             </div>
           </div>
-        </div>
-        <FormResponse
-          type={formMsg.type}
-          text={formMsg.text}
-          hidden={formMsg.hidden}
-          txId={formMsg.txId}
-        />
-      </form>
+
+          <div className="form-check mb-3" hidden={isNaN(numberOfBlocks) || numberOfBlocks === 1}>
+            <input
+              ref={sameAmountForAllRef}
+              className="form-check-input"
+              type="checkbox"
+              value=""
+              id="sameAmountForAll"
+            />
+            <label className="form-check-label" htmlFor="sameAmountForAll">
+              Use same amount for all blocks?
+            </label>
+          </div>
+          <div className="input-group">
+            <div className="row g-2 w-100">
+              {blockAmounts.map(b => {
+                return (
+                  <div className="col-md-2 form-floating" key={b.num}>
+                    <input
+                      className="form-control"
+                      id={`miningAmount-${b.num.toString()}`}
+                      onChange={e => {
+                        const amount = e.target.value;
+                        setBlockAmounts(currentBlock =>
+                          currentBlock.map(x =>
+                            x.num === b.num || sameAmountForAllRef.current.checked
+                              ? {
+                                  ...x,
+                                  amount,
+                                }
+                              : x
+                          )
+                        );
+                      }}
+                      value={b.amount}
+                    />
+                    <label htmlFor={`miningAmount-${b.num.toString()}`}>Block {b.num}</label>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <br />
+          <div className="row">
+            <div className="col-lg-3">
+              <button
+                className="btn btn-block btn-primary mb-3"
+                type="button"
+                disabled={isDisabled}
+                onClick={mineAction}
+              >
+                <div
+                  role="status"
+                  className={`${
+                    loading ? '' : 'd-none'
+                  } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
+                />
+                {buttonLabel}
+              </button>
+            </div>
+            <div className="col">
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="flexCheckDefault"
+                  onClick={onCheckboxClick}
+                />
+                <label className="form-check-label" htmlFor="flexCheckDefault">
+                  I confirm that by participating in mining, I understand:
+                  <ul>
+                    {symbol !== 'MIA' && (
+                      <li>the city has not claimed the protocol contribution</li>
+                    )}
+                    <li>
+                      participation does not guarantee winning the rights to claim newly minted{' '}
+                      {symbol}
+                    </li>
+                    <li>once STX are sent to the contract, they are not returned</li>
+                  </ul>
+                </label>
+              </div>
+            </div>
+          </div>
+          <FormResponse
+            type={formMsg.type}
+            text={formMsg.text}
+            hidden={formMsg.hidden}
+            txId={formMsg.txId}
+          />
+        </form>
+      </div>
     </div>
   );
 }
