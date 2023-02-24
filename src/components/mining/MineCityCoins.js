@@ -212,7 +212,7 @@ export default function MineCityCoins() {
       </h3>
       <CurrentStacksBlock />
       <p>
-        Mining CityCoins is done by competing with other miners in a Stacks block. You can only mine
+        Mining {symbol} is done by competing with other miners in a Stacks block. You can only mine
         once per block.
       </p>
       <p>
