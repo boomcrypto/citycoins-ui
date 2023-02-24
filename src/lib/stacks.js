@@ -78,6 +78,12 @@ export function fromMicro(value) {
   return parseInt(value / 1000000);
 }
 
-export function displayMicro(amount, symbol, decimals = 6) {
-  return `${(amount / 10 ** decimals).toFixed(decimals)} ${symbol}`;
+export function displayMicro(amount, symbol = '', decimals = 6) {
+  const amountScaled = amount / 10 ** decimals;
+  const amountFormatted = amountScaled.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+  });
+  const addSymbol = symbol ? ` ${symbol}` : '';
+
+  return `${amountFormatted}${addSymbol}`;
 }

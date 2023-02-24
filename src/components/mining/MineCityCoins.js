@@ -12,7 +12,7 @@ import {
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import DocumentationLink from '../common/DocumentationLink';
 import FormResponse from '../common/FormResponse';
-import { fromMicro, STACKS_NETWORK } from '../../lib/stacks';
+import { displayMicro, STACKS_NETWORK } from '../../lib/stacks';
 import { stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 
 import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
@@ -163,9 +163,10 @@ export default function MineCityCoins() {
       setFormMsg({
         type: 'danger',
         hidden: false,
-        text: `Not enough funds to cover estimated transaction fee of ${feePadding} STX.\nTotal submitted for mining: ${fromMicro(
-          totalUstx
-        )}\nAccount balance: ${fromMicro(balances.stx)} STX`,
+        text: `Not enough funds to cover estimated transaction fee of ${feePadding} STX.\nTotal submitted for mining: ${displayMicro(
+          totalUstx,
+          'STX'
+        )}\nAccount balance: ${displayMicro(balances.stx, 'STX')}`,
         txId: '',
       });
     } else {

@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { useMemo } from 'react';
-import { fromMicro } from '../../lib/stacks';
+import { displayMicro, fromMicro } from '../../lib/stacks';
 import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from '../../store/cities';
 
 export default function StackingStats({ stats }) {
@@ -52,7 +52,7 @@ export default function StackingStats({ stats }) {
               <span className="text-muted">{symbol} Stacked</span>
             </div>
             <div className="col">
-              <span className="h5">{fromMicro(stats.amountUstx).toLocaleString()}</span>
+              <span className="h5">{displayMicro(stats.amountUstx, '')}</span>
               <br />
               <span className="text-muted">STX Rewards</span>
             </div>
