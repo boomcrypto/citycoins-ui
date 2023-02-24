@@ -8,6 +8,7 @@ import {
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
 import { fetchJson, debugLog } from './common';
 
+// TODO: change to URL and switch against chain if it exists
 export const isTestnet = window.location.search.includes('chain=testnet');
 export const isMocknet = !isTestnet && window.location.search.includes('mocknet=local');
 export const isMainnet =
@@ -75,4 +76,14 @@ export function toMicro(value) {
 
 export function fromMicro(value) {
   return parseInt(value / 1000000);
+}
+
+export function displayMicro(amount, symbol = '', decimals = 6) {
+  const amountScaled = amount / 10 ** decimals;
+  const amountFormatted = amountScaled.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+  });
+  const addSymbol = symbol ? ` ${symbol}` : '';
+
+  return `${amountFormatted}${addSymbol}`;
 }

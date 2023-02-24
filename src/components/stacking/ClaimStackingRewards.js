@@ -138,7 +138,7 @@ export default function ClaimStackingRewards() {
   };
 
   return (
-    <div className="container-fluid p-6 mb-3">
+    <div className="container-fluid px-lg-5 py-3">
       <h3>
         {`Claim ${symbol ? symbol + ' ' : ''}Stacking Rewards`}{' '}
         <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/stacking-citycoins" />

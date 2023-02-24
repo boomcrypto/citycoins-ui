@@ -1,7 +1,7 @@
 import { useConnect } from '@stacks/connect-react';
 import { useAtom } from 'jotai';
 import { useMemo, useState } from 'react';
-import { fromMicro, STACKS_NETWORK } from '../../lib/stacks';
+import { displayMicro, STACKS_NETWORK } from '../../lib/stacks';
 import {
   createAssetInfo,
   makeContractFungiblePostCondition,
@@ -107,15 +107,13 @@ export default function StackingReward({ cycle, version, data }) {
         <div className="col">
           <div className="row flex-column flex-sm-row">
             <div className="col">
-              <span className="h5">{fromMicro(data.stxReward).toLocaleString()}</span>
+              <span className="h5">{displayMicro(data.stxReward)}</span>
               <br />
               <span className="text-muted">STX Reward</span>
             </div>
             <div className="col">
               <span className="h5">
-                {version === 'v1'
-                  ? data.toReturn.toLocaleString()
-                  : fromMicro(data.toReturn).toLocaleString()}
+                {version === 'v1' ? data.toReturn.toLocaleString() : displayMicro(data.toReturn)}
               </span>
               <br />
               <span className="text-muted">{symbol} Returned</span>

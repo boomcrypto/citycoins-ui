@@ -42,6 +42,27 @@ export default function CityMenu({ menuName }) {
     );
   });
 
+  const cityMenuSmall = CITY_LIST.map(city => {
+    return (
+      <Link
+        key={city}
+        className="nav-item nav-link col text-center text-left-md"
+        to={`/${
+          currentRoute.loaded ? currentRoute.data.toLowerCase() : 'dashboard'
+        }${CHAIN_SUFFIX}`}
+        onClick={() => {
+          setCurrentCity({ loaded: true, data: city });
+          !currentRoute.loaded && setCurrentRoute({ loaded: true, data: 'dashboard' });
+          setMiningStats([]);
+          setStackingStats([]);
+          setCurrentRewardCycle({ loaded: false, data: '' });
+        }}
+      >
+        <img className="nav-logo" src={CITY_INFO[city].logo} alt={`${city} logo`} />
+      </Link>
+    );
+  });
+
   const cityRoutes = CITY_ROUTES.map(value => {
     return (
       <li
@@ -59,10 +80,9 @@ export default function CityMenu({ menuName }) {
     );
   });
 
-  if (currentCity.loaded)
-    return <CitySelected menu={cityMenu} actions={cityRoutes} name={menuName} />;
+  if (currentCity.loaded) return <CitySelected cityMenu={cityMenuSmall} routes={cityRoutes} />;
 
-  return <NoCitySelected menu={cityMenu} />;
+  return <NoCitySelected menu={cityMenuSmall} />;
 }
 
 function NoCitySelected({ menu }) {
@@ -96,49 +116,37 @@ function NoCitySelected({ menu }) {
   );
 }
 
-function CitySelected({ menu, actions, name }) {
-  const [, setCurrentCity] = useAtom(currentCityAtom);
-  const [, setMiningStats] = useAtom(miningStatsAtom);
-  const [, setStackingStats] = useAtom(stackingStatsAtom);
-  const [, setCurrentRewardCycle] = useAtom(currentRewardCycleAtom);
-
+function CitySelected({ cityMenu, routes }) {
   return (
     <nav className="navbar navbar-light bg-white">
-      <div className="container-fluid m-0 p-0 flex-column flex-md-row justify-content-md-between flex-md-nowrap">
+      <div className="container-fluid m-0 p-0 flex-column-reverse flex-md-row justify-content-md-between flex-md-nowrap">
         <ul className="nav nav-pills flex-column flex-md-row flex-md-nowrap align-items-center justify-content-center">
-          {actions}
+          {routes}
         </ul>
-        <button
-          className="navbar-toggler m-2"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target={`#${name}`}
-          aria-controls={name}
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          Select a City
-        </button>
-      </div>
-      <div className="collapse navbar-collapse" id={name} style={{ zIndex: '1000' }}>
-        <ul className="navbar-nav align-items-md-end justify-content-center">
-          <li className="nav-item nav-item-title">
-            <Link
-              className="nav-link d-block"
-              to={`/${CHAIN_SUFFIX}`}
-              onClick={() => {
-                setCurrentCity({ loaded: false, data: '' });
-                setCurrentRewardCycle({ loaded: false, data: '' });
-                setMiningStats([]);
-                setStackingStats([]);
-              }}
-            >
-              Clear Selection
-            </Link>
-          </li>
-          {menu}
-        </ul>
+        <div className="row flex-column flex-md-row align-self-center align-self-end-md align-items-center">
+          <span className="col nav-text text-nowrap">Select a city</span>
+          {cityMenu}
+        </div>
       </div>
     </nav>
   );
 }
+
+/*
+<Link
+        key={city}
+        className="nav-item nav-link col text-center text-left-md"
+        to={`/${
+          currentRoute.loaded ? currentRoute.data.toLowerCase() : 'dashboard'
+        }${CHAIN_SUFFIX}`}
+        onClick={() => {
+          setCurrentCity({ loaded: true, data: city });
+          !currentRoute.loaded && setCurrentRoute({ loaded: true, data: 'dashboard' });
+          setMiningStats([]);
+          setStackingStats([]);
+          setCurrentRewardCycle({ loaded: false, data: '' });
+        }}
+      >
+        <img className="nav-logo" src={CITY_INFO[city].logo} alt={`${city} logo`} />
+      </Link>
+*/

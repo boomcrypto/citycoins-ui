@@ -3,7 +3,7 @@ import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useConnect } from '../../lib/auth';
-import { fromMicro, isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
+import { displayMicro, isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
 import { loginStatusAtom, stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 import { userIdAtom } from '../../store/cities';
 import CityCoinBalance from './CityCoinBalance';
@@ -103,7 +103,7 @@ export function ProfileFull() {
               ) : (
                 <StxBalance
                   key={`${symbol}-container`}
-                  balance={fromMicro(balances.data[symbol]).toLocaleString()}
+                  balance={displayMicro(balances.data[symbol])}
                   symbol={symbol}
                 />
               );

@@ -173,7 +173,7 @@ export default function ClaimMiningRewards() {
   };
 
   return (
-    <div className="container-fluid p-6">
+    <div className="container-fluid px-lg-5 py-3">
       <h3>
         {`Claim ${symbol ? symbol + ' ' : ''}Mining Rewards`}{' '}
         <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/mining-citycoins" />

@@ -82,7 +82,7 @@ export default function MiningActivity() {
   }, [currentCity.data, currentStacksBlock.data, setMiningStatsPerCity, updateMiningStats]);
 
   return (
-    <div className="container-fluid p-6">
+    <div className="container-fluid px-lg-5 py-3">
       <h3>{`${
         currentCity.loaded ? CITY_INFO[currentCity.data].symbol.toString() + ' ' : ''
       }Mining Activity`}</h3>

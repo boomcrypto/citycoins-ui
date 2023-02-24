@@ -8,7 +8,7 @@ import {
 } from '@stacks/transactions';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { fromMicro, STACKS_NETWORK } from '../../lib/stacks';
+import { displayMicro, STACKS_NETWORK } from '../../lib/stacks';
 import { CITY_CONFIG } from '../../store/cities';
 import { stxAddressAtom } from '../../store/stacks';
 import LinkTx from '../common/LinkTx';
@@ -57,16 +57,16 @@ export default function CityCoinBalance({ balances, symbol, version }) {
   };
 
   return (
-    <div className="row align-items-center">
-      <div className="col-4 text-nowrap text-right">
+    <div className="row">
+      <div className="col-5 text-nowrap text-end">
         {version === 'v2'
-          ? fromMicro(balances.data[symbol][version]).toLocaleString()
+          ? displayMicro(balances.data[symbol][version])
           : balances.data[symbol][version].toLocaleString()}
       </div>
-      <div className="col-4 text-center">
+      <div className="col-3">
         {symbol.toUpperCase()} ({version})
       </div>
-      <div className="col-4 text-center">
+      <div className="col-4">
         {version === 'v1' &&
           (submitted && txId ? (
             <small>

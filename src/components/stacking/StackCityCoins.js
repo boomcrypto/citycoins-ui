@@ -9,7 +9,7 @@ import {
 import { useAtom } from 'jotai';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { isStringAllDigits } from '../../lib/common';
-import { fromMicro, STACKS_NETWORK, toMicro } from '../../lib/stacks';
+import { displayMicro, fromMicro, STACKS_NETWORK, toMicro } from '../../lib/stacks';
 import {
   CITY_CONFIG,
   CITY_INFO,
@@ -97,9 +97,10 @@ export default function StackCityCoins() {
       setFormMsg({
         type: 'danger',
         hidden: false,
-        text: `Please enter a valid amount to stack. Current balance: ${fromMicro(
-          balances.data[currentCity.data]['v2']
-        ).toLocaleString()} ${symbol}`,
+        text: `Please enter a valid amount to stack. Current balance: ${displayMicro(
+          balances.data[currentCity.data]['v2'],
+          symbol
+        )}`,
       });
       setLoading(false);
       return;
@@ -183,10 +184,10 @@ export default function StackCityCoins() {
   };
 
   return (
-    <div className="container-fluid p-6">
+    <div className="container-fluid px-lg-5 py-3">
       <h3>
         {`Stacking ${symbol ? symbol : 'CityCoins'}`}{' '}
-        <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/stacking-citycoins"/>
+        <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/stacking-citycoins" />
       </h3>
       <CurrentRewardCycle symbol={symbol} />
       <p>
