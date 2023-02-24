@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { useMemo } from 'react';
-import { fromMicro } from '../../lib/stacks';
+import { displayMicro, fromMicro } from '../../lib/stacks';
 import { CITY_INFO, currentCityAtom } from '../../store/cities';
 import { currentStacksBlockAtom } from '../../store/stacks';
 
@@ -30,7 +30,7 @@ export default function MiningStats({ stats }) {
               </span>
             </div>
             <div className="col">
-              <span className="h5">{fromMicro(stats.amount).toLocaleString()} STX</span>
+              <span className="h5">{displayMicro(stats.amount, 'STX')}</span>
               <br />
               <span className="text-muted">Committed</span>
             </div>

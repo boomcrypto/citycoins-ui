@@ -77,3 +77,7 @@ export function toMicro(value) {
 export function fromMicro(value) {
   return parseInt(value / 1000000);
 }
+
+export function displayMicro(amount, symbol, decimals = 6) {
+  return `${(amount / 10 ** decimals).toFixed(decimals)} ${symbol}`;
+}
