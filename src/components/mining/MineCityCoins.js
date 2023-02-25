@@ -18,6 +18,7 @@ import { stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
 import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from '../dashboard/MiningStats';
+import { getCitySettings } from '../../store/citycoins-protocol';
 
 export default function MineCityCoins() {
   const { doContractCall } = useConnect();
@@ -146,6 +147,9 @@ export default function MineCityCoins() {
     const totalUstxCV = uintCV(totalUstx);
     const cityNameCV = stringAsciiCV(symbol.toLowerCase());
 
+    console.log(`loaded: ${currentCity.loaded}, current city: ${currentCity.data}`);
+    const citySettings = await getCitySettings(currentCity.data);
+
     if (totalUstx >= balances.stx - feePadding) {
       setLoading(false);
       setFormMsg({
@@ -160,9 +164,9 @@ export default function MineCityCoins() {
     } else {
       try {
         await doContractCall({
-          contractAddress: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
-          contractName: 'ccd006-citycoin-mining',
-          functionName: 'mine',
+          contractAddress: citySettings.config.mining.deployer,
+          contractName: citySettings.config.mining.contractName,
+          functionName: citySettings.config.mining.miningFunction,
           functionArgs: [cityNameCV, mineManyArrayCV],
           postConditionMode: PostConditionMode.Deny,
           postConditions: [
@@ -228,7 +232,7 @@ export default function MineCityCoins() {
           <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
         ))
       )}
-      <div class="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
+      <div className="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
         <h3 className="mt-5">
           {`Mine ${symbol} `}
           <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/mining-citycoins" />
