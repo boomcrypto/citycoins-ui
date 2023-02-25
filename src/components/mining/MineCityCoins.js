@@ -104,18 +104,6 @@ export default function MineCityCoins() {
 
   const mineAction = async () => {
     setLoading(true);
-
-    // remove lines below when live
-    setLoading(false);
-    setFormMsg({
-      type: 'danger',
-      hidden: false,
-      text: 'Mining disabled until ccip013-activation is live',
-      txId: '',
-    });
-    return;
-    // remove lines above when live
-
     if (numberOfBlocks === 1 && !amountRef.current.value) {
       setLoading(false);
       setFormMsg({

@@ -31,8 +31,7 @@ const NYC_INFO = {
   currentVersion: 'daoV1',
 };
 
-// key: currentCityAtom
-export const CITY_INFO = {
+const CITY_INFO = {
   mia: MIA_INFO,
   nyc: NYC_INFO,
 };
@@ -97,31 +96,43 @@ const nycTokenV2 = {
 
 // create object for v1 of the DAO
 
-const daoV1 = {
-  mining: {
-    deployer: 'SP1XQXW9JNQ1W4A7PYTN3HCHPEY7SHM6KP98H3NCY',
-    contractName: 'ccd006-citycoin-mining',
-    miningFunction: 'mine',
-    miningClaimFunction: 'claim-mining-reward',
-    activated: true,
-    activationBlock: 96600,
-    shutdown: false,
-    shutdownBlock: undefined,
-  },
-  stacking: {
-    deployer: 'SP1XQXW9JNQ1W4A7PYTN3HCHPEY7SHM6KP98H3NCY',
-    contractName: 'ccd007-city-stacking',
-    stackingFunction: 'stack',
-    stackingClaimFunction: 'claim-stacking-reward',
-    startCycle: 54,
-    endCycle: undefined,
-  },
-  token: miaTokenV2,
+const daoV1 = city => {
+  const token = () => {
+    switch (city) {
+      case 'mia':
+        return miaTokenV2;
+      case 'nyc':
+        return nycTokenV2;
+      default:
+        return undefined;
+    }
+  };
+  return {
+    mining: {
+      deployer: 'SP1XQXW9JNQ1W4A7PYTN3HCHPEY7SHM6KP98H3NCY',
+      contractName: 'ccd006-citycoin-mining',
+      miningFunction: 'mine',
+      miningClaimFunction: 'claim-mining-reward',
+      activated: true,
+      activationBlock: 96600,
+      shutdown: false,
+      shutdownBlock: undefined,
+    },
+    stacking: {
+      deployer: 'SP1XQXW9JNQ1W4A7PYTN3HCHPEY7SHM6KP98H3NCY',
+      contractName: 'ccd007-city-stacking',
+      stackingFunction: 'stack',
+      stackingClaimFunction: 'claim-stacking-reward',
+      startCycle: 54,
+      endCycle: undefined,
+    },
+    token: token,
+  };
 };
 
 // create object for MIA configuration
 
-export const MIA_CONFIG = {
+const MIA_CONFIG = {
   legacyV1: {
     mining: {
       deployer: 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27',
@@ -164,12 +175,12 @@ export const MIA_CONFIG = {
     },
     token: miaTokenV2,
   },
-  daoV1: daoV1,
+  daoV1: daoV1('mia'),
 };
 
 // create object for NYC configuration
 
-export const NYC_CONFIG = {
+const NYC_CONFIG = {
   legacyV1: {
     mining: {
       deployer: 'SP2H8PY27SEZ03MWRKS5XABZYQN17ETGQS3527SA5',
@@ -210,13 +221,13 @@ export const NYC_CONFIG = {
     },
     token: nycTokenV2,
   },
-  daoV1: daoV1,
+  daoV1: daoV1('nyc'),
 };
 
-// export both city configs as one object
+// combine both city configs as one object
 
 // key: currentCityAtom, cityInfoAtom
-export const CITY_CONFIG = {
+const CITY_CONFIG = {
   mia: MIA_CONFIG,
   nyc: NYC_CONFIG,
 };
@@ -260,4 +271,30 @@ export async function getVersionByCycle(city, cycle) {
       return version;
     }
   }
+}
+
+////////////////////
+// CONFIG HELPERS
+////////////////////
+
+// city = currentCity.data
+// version = getVersion* above or default to latest
+export async function getCitySettings(city, version = undefined) {
+  return {
+    info: CITY_INFO[city],
+    config: version
+      ? CITY_CONFIG[city][version]
+      : CITY_CONFIG[city][CITY_INFO[city].currentVersion],
+  };
+}
+
+// city = currentCity.data
+// version = getVersion* above or default to latest
+export async function getCityConfig(city, version = undefined) {
+  return version ? CITY_CONFIG[city][version] : CITY_CONFIG[city][CITY_INFO[city].currentVersion];
+}
+
+// city = currentCity.data
+export async function getCityInfo(city) {
+  return CITY_INFO[city];
 }

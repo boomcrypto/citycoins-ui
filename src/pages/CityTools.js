@@ -4,7 +4,7 @@ import NoCitySelected from '../components/common/NoCitySelected';
 import Unauthorized from '../components/common/Unauthorized';
 import { currentCityAtom } from '../store/cities';
 import { loginStatusAtom } from '../store/stacks';
-import { getVersionByBlock, getVersionByCycle } from '../../store/citycoins-protocol';
+import { getVersionByBlock, getVersionByCycle } from '../store/citycoins-protocol';
 
 export default function CityTools() {
   const [loginStatus] = useAtom(loginStatusAtom);
