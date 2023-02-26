@@ -227,7 +227,7 @@ export default function StackCityCoins() {
         ))
       )}
       <div class="container-fluid">
-        <div class="row flex-col bg-secondary rounded-3 p-3 mt-3">
+        <div class="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
           <div class="col-lg-6">
             <p className="fs-4 fw-bold mt-3">Some quick notes:</p>
             <ul>
@@ -271,7 +271,7 @@ export default function StackCityCoins() {
                 />
               </div>
               <button className="btn btn-block btn-primary" type="button" onClick={stackingPrep}>
-                {loading ? <LoadingSpinner text="Stacking..." /> : 'Stack'}
+                {loading ? <LoadingSpinner text="Stacking..." /> : `Stack ${symbol}`}
               </button>
             </form>
             <br />

@@ -11,3 +11,11 @@ To view the UI locally:
 3. Run `yarn start`
 
 A new browser window will open to `localhost:3000`.
+
+## Hosting
+
+The instructions above will spin up a local instance, but to host the code for access outside of the local environment:
+
+1. Clone the repository
+2. Setup a Cloudflare account
+3. Connect the repository to Cloudflare Pages

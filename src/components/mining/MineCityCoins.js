@@ -231,8 +231,8 @@ export default function MineCityCoins() {
           <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
         ))
       )}
-      <div className="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
-        <h3 className="mt-5">
+      <div className="row flex-col bg-secondary rounded-3 px-3 mt-3">
+        <h3 className="mt-3">
           {`Mine ${symbol} `}
           <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/mining-citycoins" />
         </h3>
