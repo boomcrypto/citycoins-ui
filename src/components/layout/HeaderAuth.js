@@ -15,6 +15,7 @@ import {
 import { ProfileSmall } from '../profile/ProfileSmall';
 import { CITY_INFO, currentCityAtom, userIdAtom } from '../../store/cities';
 import { getCCBalance, getUserId } from '../../lib/citycoins';
+import { fetchJson } from '../../lib/common';
 
 export default function HeaderAuth() {
   const { handleOpenAuth } = useConnect();
@@ -82,23 +83,32 @@ export default function HeaderAuth() {
 
   useEffect(() => {
     const fetchUserIds = async stxAddress => {
-      const miaIdV1 = getUserId('v1', 'mia', stxAddress);
-      const miaIdV2 = getUserId('v2', 'mia', stxAddress);
-      const nycIdV1 = getUserId('v1', 'nyc', stxAddress);
-      const nycIdV2 = getUserId('v2', 'nyc', stxAddress);
-      Promise.all([miaIdV1, miaIdV2, nycIdV1, nycIdV2]).then(values => {
-        const userIds = {
-          mia: {
-            v1: values[0],
-            v2: values[1],
-          },
-          nyc: {
-            v1: values[2],
-            v2: values[3],
-          },
-        };
-        setUserIds({ loaded: true, data: userIds });
-      });
+      // get all Miami user IDs
+      const miaLegacyV1 = await getUserId('v1', 'mia', stxAddress).catch(() => undefined);
+      const miaLegacyV2 = await getUserId('v2', 'mia', stxAddress).catch(() => undefined);
+      const miaDaoV1 = await fetchJson(
+        `https://protocol.citycoins.co/api/ccd003-user-registry/get-user-id?cityId=1&user=${stxAddress}`
+      ).catch(() => undefined);
+      // get all NYC user IDs
+      const nycLegacyV1 = await getUserId('v1', 'nyc', stxAddress).catch(() => undefined);
+      const nycLegacyV2 = await getUserId('v2', 'nyc', stxAddress).catch(() => undefined);
+      const nycDaoV1 = await fetchJson(
+        `https://protocol.citycoins.co/api/ccd003-user-registry/get-user-id?cityId=2&user=${stxAddress}`
+      ).catch(() => undefined);
+      // compile info to set in atom
+      const userIds = {
+        mia: {
+          legacyV1: miaLegacyV1,
+          legacyV2: miaLegacyV2,
+          daoV1: miaDaoV1,
+        },
+        nyc: {
+          legacyV1: nycLegacyV1,
+          legacyV2: nycLegacyV2,
+          daoV1: nycDaoV1,
+        },
+      };
+      setUserIds({ loaded: true, data: userIds });
     };
     stxAddress.loaded && fetchUserIds(stxAddress.data);
   }, [setUserIds, stxAddress.loaded, stxAddress.data]);

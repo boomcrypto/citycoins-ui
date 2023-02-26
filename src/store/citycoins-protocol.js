@@ -2,6 +2,7 @@ import MiamiCoin from '../images/MIA_StandAlone.svg';
 import MiamiCoinBG from '../images/MIA_BG_Horizontal.svg';
 import NewYorkCityCoin from '../images/NYC_StandAlone.svg';
 import NewYorkCityCoinBG from '../images/NYC_BG_Horizontal.svg';
+import { atom } from 'jotai';
 
 /////////////////////////
 // CITY INFO
@@ -35,6 +36,28 @@ const CITY_INFO = {
   mia: MIA_INFO,
   nyc: NYC_INFO,
 };
+
+/////////////////////////
+// CCD003/CCD004 IDS
+/////////////////////////
+
+const userIdsAtom = atom({
+  mia: {
+    legacyV1: undefined,
+    legacyV2: undefined,
+    daoV1: undefined,
+  },
+  nyc: {
+    legacyV1: undefined,
+    legacyV2: undefined,
+    daoV1: undefined,
+  },
+});
+
+export const cityIdsAtom = atom({
+  mia: 1,
+  nyc: 2,
+});
 
 /////////////////////////
 // CITY CONFIGURATIONS

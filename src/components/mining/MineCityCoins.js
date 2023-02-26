@@ -147,7 +147,6 @@ export default function MineCityCoins() {
     const totalUstxCV = uintCV(totalUstx);
     const cityNameCV = stringAsciiCV(symbol.toLowerCase());
 
-    console.log(`loaded: ${currentCity.loaded}, current city: ${currentCity.data}`);
     const citySettings = await getCitySettings(currentCity.data);
 
     if (totalUstx >= balances.stx - feePadding) {

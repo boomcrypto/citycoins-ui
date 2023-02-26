@@ -4,6 +4,7 @@ import {
   FungibleConditionCode,
   makeStandardFungiblePostCondition,
   PostConditionMode,
+  stringAsciiCV,
   uintCV,
 } from '@stacks/transactions';
 import { useAtom } from 'jotai';
@@ -23,6 +24,7 @@ import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
 import DocumentationLink from '../common/DocumentationLink';
 import StackingStats from '../dashboard/StackingStats';
+import { getCitySettings } from '../../store/citycoins-protocol';
 
 export default function StackCityCoins() {
   const { doContractCall } = useConnect();
@@ -129,46 +131,58 @@ export default function StackCityCoins() {
   };
 
   const stack = async (amount, cycles) => {
+    const cityNameCV = stringAsciiCV(symbol.toLowerCase());
     const amountCV = uintCV(toMicro(amount));
-    const cyclesCV = uintCV(cycles);
-    const version = CITY_INFO[currentCity.data].currentVersion;
-    await doContractCall({
-      contractAddress: CITY_CONFIG[currentCity.data][version].deployer,
-      contractName: CITY_CONFIG[currentCity.data][version].core.name,
-      functionName: 'stack-tokens',
-      functionArgs: [amountCV, cyclesCV],
-      network: STACKS_NETWORK,
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        makeStandardFungiblePostCondition(
-          stxAddress.data,
-          FungibleConditionCode.Equal,
-          amountCV.value,
-          createAssetInfo(
-            CITY_CONFIG[currentCity.data][version].deployer,
-            CITY_CONFIG[currentCity.data][version].token.name,
-            CITY_CONFIG[currentCity.data][version].token.tokenName
-          )
-        ),
-      ],
-      onCancel: () => {
-        setLoading(false);
-        setFormMsg({
-          type: 'warning',
-          hidden: false,
-          text: 'Transaction was canceled, please try again.',
-        });
-      },
-      onFinish: result => {
-        setLoading(false);
-        setFormMsg({
-          type: 'success',
-          hidden: false,
-          text: `Stacking transaction successfully sent.`,
-          txId: result.txId,
-        });
-      },
-    });
+    const lockPeriodCV = uintCV(cycles);
+    const citySettings = await getCitySettings(currentCity.data);
+    try {
+      await doContractCall({
+        contractAddress: citySettings.config.stacking.deployer,
+        contractName: citySettings.config.stacking.contractName,
+        functionName: citySettings.config.stacking.stackingFunction,
+        functionArgs: [cityNameCV, amountCV, lockPeriodCV],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [
+          makeStandardFungiblePostCondition(
+            stxAddress.data,
+            FungibleConditionCode.Equal,
+            amountCV.value,
+            createAssetInfo(
+              citySettings.config.token.deployer,
+              citySettings.config.token.contractName,
+              citySettings.config.token.tokenName
+            )
+          ),
+        ],
+        network: STACKS_NETWORK,
+        onCancel: () => {
+          setLoading(false);
+          setFormMsg({
+            type: 'warning',
+            hidden: false,
+            text: 'Transaction was canceled, please try again.',
+          });
+        },
+        onFinish: result => {
+          setLoading(false);
+          setFormMsg({
+            type: 'success',
+            hidden: false,
+            text: `Stacking transaction successfully sent.`,
+            txId: result.txId,
+          });
+        },
+      });
+    } catch (err) {
+      console.log(`Error: ${err.message}`);
+      setLoading(false);
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: `Error: ${err.message}`,
+        txId: '',
+      });
+    }
   };
 
   const max = async () => {

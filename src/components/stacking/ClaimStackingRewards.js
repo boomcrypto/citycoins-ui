@@ -15,9 +15,12 @@ import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
 import DocumentationLink from '../common/DocumentationLink';
 import StackingReward from './StackingReward';
+import { cityIdsAtom, getCityInfo } from '../../store/citycoins-protocol';
+import { fetchJson } from '../../lib/common';
 
 export default function ClaimStackingRewards() {
   const [userIds] = useAtom(userIdAtom);
+  const [cityIds] = useAtom(cityIdsAtom);
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
   const [currentRewardCycle] = useAtom(currentRewardCycleAtom);
   const [currentCity] = useAtom(currentCityAtom);
@@ -91,34 +94,44 @@ export default function ClaimStackingRewards() {
       setFormMsg({
         type: 'warning',
         hidden: false,
-        text: `Reward cycle is in the future. Rewards will show 0 for the current version (${
-          CITY_INFO[currentCity.data].currentVersion
-        }) of the contract.`,
+        text: `Reward cycle is in the future. Rewards will show 0 for the current version of the contract.`,
       });
     }
-    // get claim amounts for each version
-    CITY_INFO[currentCity.data].versions.map(async version => {
-      const { stxReward, toReturn } = await getClaimAmounts(cycle, version);
-      // add to array used for display
-      setRewardCyclesToClaim(prev => {
-        let newClaims = { ...prev };
-        // make sure all object keys exist, could
-        // generalize as createNestedObject in common
-        if (!newClaims.hasOwnProperty(currentCity.data)) newClaims[currentCity.data] = {};
-        if (!newClaims[currentCity.data].hasOwnProperty(cycle))
-          newClaims[currentCity.data][cycle] = {};
-        if (!newClaims[currentCity.data][cycle].hasOwnProperty(version))
-          newClaims[currentCity.data][cycle][version] = {};
-        // add new value to existing
-        let newClaimsValue = { ...newClaims };
+    const cityInfo = await getCityInfo(currentCity.data);
+    for (const version of cityInfo.versions) {
+      console.log('version', version);
+      // create an array used for display
+      let stxReward = 0;
+      let toReturn = 0;
 
-        newClaimsValue[currentCity.data][cycle][version] = {
+      ({ stxReward, toReturn } = await getClaimAmounts(cycle, version).catch(err => {
+        setFormMsg({
+          type: 'warning',
+          hidden: false,
+          text: `Unable to fetch claim amounts, please try again`,
+          txId: '',
+        });
+      }));
+      setRewardCyclesToClaim(prev => {
+        // create object with original values
+        const oldClaims = { ...prev };
+        // check that all object keys exist in case the object is blank
+        if (!oldClaims.hasOwnProperty(currentCity.data)) oldClaims[currentCity.data] = {};
+        if (!oldClaims[currentCity.data].hasOwnProperty(cycle))
+          oldClaims[currentCity.data][cycle] = {};
+        if (!oldClaims[currentCity.data][cycle].hasOwnProperty(version))
+          oldClaims[currentCity.data][cycle][version] = {};
+        // delete value for same cycle if it exists
+        delete oldClaims[currentCity.data][cycle][version];
+        // add new value returned from getClaimAmounts
+        const newClaims = { ...oldClaims };
+        newClaims[currentCity.data][cycle][version] = {
           stxReward: stxReward,
           toReturn: toReturn,
         };
-        return newClaimsValue;
+        return newClaims;
       });
-    });
+    }
     setLoading(false);
   };
 
@@ -127,13 +140,48 @@ export default function ClaimStackingRewards() {
     let toReturn = 0;
     // check if ID is found with version
     const id = userIds.data[currentCity.data][version] ?? undefined;
+    console.log('id', id);
     if (id) {
-      // get reward amount
-      stxReward = await getStackingReward(version, currentCity.data, cycle, id);
-      // get CityCoins to return
-      const stacker = await getStackerAtCycle(version, currentCity.data, cycle, id);
-      toReturn = stacker.toReturn;
+      const legacy = version.includes('legacy');
+      if (legacy) {
+        const getLegacyVersion = () => {
+          if (version === 'legacyV1') return 'v1';
+          if (version === 'legacyV2') return 'v2';
+          return undefined;
+        };
+        console.log('legacy', getLegacyVersion());
+        // get reward amount
+        stxReward = (await getStackingReward(getLegacyVersion(), currentCity.data, cycle, id)) ?? 0;
+        console.log('stxReward', stxReward);
+        // get CityCoins to return
+        const stacker = await getStackerAtCycle(getLegacyVersion(), currentCity.data, cycle, id);
+        toReturn = stacker.toReturn ?? 0;
+      } else {
+        // get reward amount
+        stxReward = await fetchJson(
+          `https://protocol.citycoins.co/api/ccd007-citycoin-stacking/get-stacking-reward?cityId=${
+            cityIds[currentCity.data]
+          }&userId=${id}&cycle=${cycle}`
+        ).catch(() => 0);
+        // get CityCoins to return
+        const stacker = await fetchJson(
+          `https://protocol.citycoins.co/api/ccd007-citycoin-stacking/get-stacker?cityId=${
+            cityIds[currentCity.data]
+          }&userId=${id}&cycle=${cycle}`
+        ).catch(() => {
+          return {
+            stacked: 0,
+            claimable: 0,
+          };
+        });
+        toReturn = stacker.claimable;
+      }
     }
+
+    console.log('cycle', cycle);
+    console.log('stxReward', stxReward);
+    console.log('toReturn', toReturn);
+
     return { stxReward: stxReward, toReturn: toReturn };
   };
 
@@ -153,7 +201,7 @@ export default function ClaimStackingRewards() {
         transaction.
       </p>
       <form>
-        <div className="form-floating">
+        <div className="form-floating mb-3">
           <input
             className="form-control"
             placeholder="Check Reward Cycle"
@@ -162,16 +210,22 @@ export default function ClaimStackingRewards() {
           />
           <label htmlFor="rewardCycleRef">Reward Cycle to Check?</label>
         </div>
-        <button className="btn btn-block btn-primary my-3 me-3" type="button" onClick={claimPrep}>
-          {loading ? <LoadingSpinner text="Check Reward Cycle" /> : 'Check Reward Cycle'}
-        </button>
-        <button
-          className="btn btn-block btn-primary my-3"
-          type="button"
-          onClick={() => setRewardCyclesToClaim(RESET)}
-        >
-          Clear Data
-        </button>
+        <div className="d-flex flex-column flex-md-row align-items-center">
+          <button
+            className="btn btn-block btn-primary mb-3 me-md-3"
+            type="button"
+            onClick={claimPrep}
+          >
+            {loading ? <LoadingSpinner text="Check Reward Cycle" /> : 'Check Reward Cycle'}
+          </button>
+          <button
+            className="btn btn-block btn-primary mb-3"
+            type="button"
+            onClick={() => setRewardCyclesToClaim(RESET)}
+          >
+            Clear Data
+          </button>
+        </div>
       </form>
       <FormResponse {...formMsg} />
       {rewardCyclesToClaim[currentCity.data] &&
@@ -189,3 +243,22 @@ export default function ClaimStackingRewards() {
     </div>
   );
 }
+
+/* FOR LATER?
+
+const checkAllVersionsRef = useRef();
+
+<div className="form-check mb-3 ms-3 form-disabled">
+  <input
+    ref={checkAllVersionsRef}
+    className="form-check-input"
+    type="checkbox"
+    value=""
+    id="checkAllVersions"
+  />
+  <label className="form-check-label" htmlFor="checkAllVersions">
+    Check all versions?
+  </label>
+</div>
+
+*/
