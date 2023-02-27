@@ -20,7 +20,7 @@ import { currentStacksBlockAtom } from './store/stacks';
 import { useEffect } from 'react';
 import { getBlockHeight } from './lib/stacks';
 import { getRewardCycle } from './lib/citycoins';
-import { sleep } from './lib/common';
+import { fetchJson, sleep } from './lib/common';
 
 export default function App() {
   const { authOptions } = useConnect();
@@ -87,11 +87,16 @@ function Content() {
         data: +blockHeight,
       });
       if (currentCity.loaded) {
+        /*
         const rewardCycle = await getRewardCycle(
           CITY_INFO[currentCity.data].currentVersion,
           currentCity.data
         );
-        setRewardCycle({ loaded: true, data: +rewardCycle });
+        */
+        const rewardCycle = await fetchJson(
+          `https://protocol.citycoins.co/api/ccd007-citycoin-stacking/get-current-reward-cycle`
+        ).catch(() => undefined);
+        rewardCycle && setRewardCycle({ loaded: true, data: +rewardCycle });
       }
       await sleep(1000 * 60); // 60 seconds
     };
