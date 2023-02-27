@@ -24,7 +24,7 @@ export default function CityTools() {
 
 const testVersionsByBlock = async () => {
   const blockTests = [
-    23000, 25000, 58900, 58920, 59000, 75000, 85000, 96599, 96600, 96601, 97000, 98000,
+    23000, 25000, 58900, 58920, 59000, 75000, 85000, 96778, 96779, 96780, 97000, 98000,
   ];
   for (const block of blockTests) {
     const version = await getVersionByBlock('mia', block);

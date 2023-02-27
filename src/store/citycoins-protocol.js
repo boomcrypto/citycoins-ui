@@ -137,7 +137,7 @@ const daoV1 = city => {
       miningFunction: 'mine',
       miningClaimFunction: 'claim-mining-reward',
       activated: true,
-      activationBlock: 96600, // TODO: UPDATE THIS
+      activationBlock: 96779,
       shutdown: false,
       shutdownBlock: undefined,
     },
@@ -186,7 +186,7 @@ const MIA_CONFIG = {
       activated: true,
       activationBlock: 58921,
       shutdown: true,
-      shutdownBlock: 96600, // TODO: UPDATE THIS
+      shutdownBlock: 96779,
     },
     stacking: {
       deployer: 'SP1H1733V5MZ3SZ9XRW9FKYGEZT0JDGEB8Y634C7R',
@@ -233,6 +233,8 @@ const NYC_CONFIG = {
       miningClaimFunction: 'claim-mining-reward',
       activated: true,
       activationBlock: 58925,
+      shutdown: true,
+      shutdownBlock: 96779,
     },
     stacking: {
       deployer: 'SPSCWDV3RKV5ZRN1FQD84YE1NQFEDJ9R1F4DYQ11',
