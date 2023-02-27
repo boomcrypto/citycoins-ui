@@ -136,6 +136,7 @@ export default function StackCityCoins() {
     const amountCV = uintCV(toMicro(amount));
     const lockPeriodCV = uintCV(cycles);
     const citySettings = await getCitySettings(currentCity.data);
+
     try {
       await doContractCall({
         contractAddress: citySettings.config.stacking.deployer,

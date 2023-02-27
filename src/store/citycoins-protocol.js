@@ -120,7 +120,7 @@ const nycTokenV2 = {
 // create object for v1 of the DAO
 
 const daoV1 = city => {
-  const token = () => {
+  const token = city => {
     switch (city) {
       case 'mia':
         return miaTokenV2;
@@ -143,13 +143,13 @@ const daoV1 = city => {
     },
     stacking: {
       deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
-      contractName: 'ccd007-city-stacking',
+      contractName: 'ccd007-citycoin-stacking',
       stackingFunction: 'stack',
       stackingClaimFunction: 'claim-stacking-reward',
       startCycle: 54,
       endCycle: undefined,
     },
-    token: token,
+    token: token(city),
   };
 };
 
