@@ -18,6 +18,7 @@ import {
 } from '../../store/cities';
 import LinkTx from '../common/LinkTx';
 import { capitalizeFirstLetter } from '../../lib/common';
+import { getCitySettings } from '../../store/citycoins-protocol';
 
 export default function StackingReward({ cycle, version, data }) {
   const { doContractCall } = useConnect();
@@ -31,6 +32,7 @@ export default function StackingReward({ cycle, version, data }) {
   }, [currentCity.loaded, currentCity.data]);
 
   const claimReward = async () => {
+    const citySettings = await getCitySettings(currentCity.data, version);
     const targetCycleCV = uintCV(cycle);
     const amountUstxCV = uintCV(data.stxReward);
     const amountCityCoinsCV = uintCV(data.toReturn);
@@ -39,8 +41,8 @@ export default function StackingReward({ cycle, version, data }) {
     data.stxReward > 0 &&
       postConditions.push(
         makeContractSTXPostCondition(
-          CITY_CONFIG[currentCity.data][version].deployer,
-          CITY_CONFIG[currentCity.data][version].core.name,
+          citySettings.config.stacking.deployer,
+          citySettings.config.stacking.contractName,
           FungibleConditionCode.Equal,
           amountUstxCV.value
         )
@@ -48,22 +50,22 @@ export default function StackingReward({ cycle, version, data }) {
     data.toReturn > 0 &&
       postConditions.push(
         makeContractFungiblePostCondition(
-          CITY_CONFIG[currentCity.data][version].deployer,
-          CITY_CONFIG[currentCity.data][version].core.name,
+          citySettings.config.stacking.deployer,
+          citySettings.config.stacking.contractName,
           FungibleConditionCode.Equal,
           amountCityCoinsCV.value,
           createAssetInfo(
-            CITY_CONFIG[currentCity.data][version].deployer,
-            CITY_CONFIG[currentCity.data][version].token.name,
-            CITY_CONFIG[currentCity.data][version].token.tokenName
+            citySettings.config.token.deployer,
+            citySettings.config.token.contractName,
+            citySettings.config.token.tokenName
           )
         )
       );
     // submit tx
     await doContractCall({
-      contractAddress: CITY_CONFIG[currentCity.data][version].deployer,
-      contractName: CITY_CONFIG[currentCity.data][version].core.name,
-      functionName: 'claim-stacking-reward',
+      contractAddress: citySettings.config.stacking.deployer,
+      contractName: citySettings.config.stacking.contractName,
+      functionName: citySettings.config.stacking.stackingClaimFunction,
       functionArgs: [targetCycleCV],
       postConditionMode: PostConditionMode.Deny,
       postConditions: postConditions,
