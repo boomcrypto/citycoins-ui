@@ -12,6 +12,7 @@ import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentRewardCycle from '../common/CurrentRewardCycle';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from './StackingStats';
+import ComingSoon from '../common/ComingSoon';
 
 export default function StackingActivity() {
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
@@ -42,6 +43,8 @@ export default function StackingActivity() {
   ]);
 
   useEffect(() => {
+    // temporarily disable
+    return;
     // async getter for the data per cycle
     const fetchStackingStats = async (cycle, distance) => {
       const stats = await getStackingStatsAtCycle(
@@ -111,10 +114,14 @@ export default function StackingActivity() {
       {cityStackingStats.updating ? (
         <LoadingSpinner text={`Loading stacking data`} />
       ) : (
-        cityStackingStats.data.map(value => (
-          <StackingStats key={`stats-${value.cycle}`} stats={value} />
-        ))
+        <ComingSoon />
       )}
     </div>
   );
 }
+
+/*
+cityStackingStats.data.map(value => (
+  <StackingStats key={`stats-${value.cycle}`} stats={value} />
+))
+*/

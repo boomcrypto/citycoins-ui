@@ -1,15 +1,19 @@
 import { useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
 import { getCoinbaseAmount, getMiningStatsAtBlock } from '../../lib/citycoins';
+import { fetchJson } from '../../lib/common';
 import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
+import { cityIdsAtom } from '../../store/citycoins-protocol';
 import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from './MiningStats';
+import ComingSoon from '../common/ComingSoon';
 
 export default function MiningActivity() {
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
   const [currentCity] = useAtom(currentCityAtom);
+  const [cityIds] = useAtom(cityIdsAtom);
   const [miningStatsPerCity, setMiningStatsPerCity] = useAtom(miningStatsPerCityAtom);
 
   const cityMiningStats = useMemo(() => {
@@ -35,12 +39,21 @@ export default function MiningActivity() {
   ]);
 
   useEffect(() => {
+    // temporarily disable
+    return;
     // async getter for the data per block
     const fetchMiningStats = async (block, distance) => {
+      /*
       const stats = await getMiningStatsAtBlock(
         CITY_INFO[currentCity.data].currentVersion,
         currentCity.data,
         block
+      );
+      */
+      const stats = await fetchJson(
+        `https://protocol.citycoins.co/api/ccd006-citycoin-mining/get-mining-stats?cityId=${
+          cityIds[currentCity.data]
+        }&height=${block}`
       );
       stats.blockHeight = block;
       const reward = await getCoinbaseAmount(
@@ -79,7 +92,13 @@ export default function MiningActivity() {
         fetchMiningStats(i, end - start + 1);
       }
     }
-  }, [currentCity.data, currentStacksBlock.data, setMiningStatsPerCity, updateMiningStats]);
+  }, [
+    cityIds,
+    currentCity.data,
+    currentStacksBlock.data,
+    setMiningStatsPerCity,
+    updateMiningStats,
+  ]);
 
   return (
     <div className="container-fluid px-lg-5 py-3">
@@ -87,13 +106,13 @@ export default function MiningActivity() {
         currentCity.loaded ? CITY_INFO[currentCity.data].symbol.toString() + ' ' : ''
       }Mining Activity`}</h3>
       <CurrentStacksBlock />
-      {cityMiningStats.updating ? (
-        <LoadingSpinner text={`Loading mining data`} />
-      ) : (
-        cityMiningStats.data.map(value => (
-          <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
-        ))
-      )}
+      {cityMiningStats.updating ? <LoadingSpinner text={`Loading mining data`} /> : <ComingSoon />}
     </div>
   );
 }
+
+/*
+cityMiningStats.data.map(value => (
+  <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
+))
+*/
