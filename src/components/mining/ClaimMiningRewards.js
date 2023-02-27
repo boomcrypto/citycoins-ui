@@ -10,6 +10,8 @@ import { CITY_CONFIG, CITY_INFO, currentCityAtom } from '../../store/cities';
 import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
 import { uintCV } from '@stacks/transactions';
 import { STACKS_NETWORK } from '../../lib/stacks';
+import { getCitySettings, getVersionByBlock } from '../../store/citycoins-protocol';
+import { fetchJson } from '../../lib/common';
 
 export default function ClaimMiningRewards() {
   const { doContractCall } = useConnect();
@@ -80,10 +82,10 @@ export default function ClaimMiningRewards() {
       setLoading(false);
       return;
     }
-    // select target version based on block height
-    const version = await selectCityVersion(block);
-    console.log(`version: ${version}`);
-    if (!version) {
+    // select version based on block height
+    const cityVersion = await getVersionByBlock(currentCity.data, block);
+    console.log(`version: ${cityVersion}`);
+    if (!cityVersion) {
       setFormMsg({
         type: 'danger',
         hidden: false,
@@ -92,15 +94,73 @@ export default function ClaimMiningRewards() {
       setLoading(false);
       return;
     }
-    // verify user is winner at block height
-    const winner = await isBlockWinner(version, currentCity.data, block, stxAddress.data);
-    if (winner) {
-      setFormMsg({
-        type: 'success',
-        hidden: false,
-        text: 'Winner at block height, checking if reward claimed.',
-      });
+    // determine if legacy or current protocol is in use
+    const legacy = cityVersion.includes('legacy');
+    console.log(`legacy: ${legacy}`);
+
+    let winner = false;
+    let canClaim = false;
+
+    if (legacy) {
+      // select legacy target version based on block height
+      const legacyVersion = await selectCityVersion(block);
+      console.log(`legacyVersion: ${legacyVersion}`);
+      if (!legacyVersion) {
+        setFormMsg({
+          type: 'danger',
+          hidden: false,
+          text: 'Cannot find city legacy version for block height.',
+        });
+        setLoading(false);
+        return;
+      }
+      // verify user is winner at block height
+      winner = await isBlockWinner(legacyVersion, currentCity.data, block, stxAddress.data);
+
+      // verify user can claim mining reward
+      canClaim = await canClaimMiningReward(
+        legacyVersion,
+        currentCity.data,
+        block,
+        stxAddress.data
+      );
     } else {
+      // get city ID
+      const cityIdUrl = new URL(
+        'https://protocol.citycoins.co/api/ccd004-city-registry/get-city-id'
+      );
+      cityIdUrl.searchParams.append('city', currentCity.data);
+      const cityIdResult = await fetchJson(cityIdUrl).catch(() => undefined);
+      if (!cityIdResult) {
+        setFormMsg({
+          type: 'danger',
+          hidden: false,
+          text: 'Cannot find city ID for city.',
+        });
+        setLoading(false);
+        return;
+      }
+      // call new isBlockWinner, set from object
+      const blockWinnerUrl =
+        'https://protocol.citycoins.co/api/ccd006-citycoin-mining/is-block-winner';
+      blockWinnerUrl.searchParams.append('cityId', cityIdResult);
+      blockWinnerUrl.searchParams.append('claimHeight', block);
+      blockWinnerUrl.searchParams.append('user', stxAddress.data);
+      const blockWinnerResult = await fetchJson(blockWinnerUrl).catch(() => undefined);
+      if (!blockWinnerResult) {
+        setFormMsg({
+          type: 'danger',
+          hidden: false,
+          text: 'Cannot find block winner for city.',
+        });
+        setLoading(false);
+        return;
+      }
+      winner = blockWinnerResult.winner;
+      canClaim = blockWinnerResult.canClaim;
+    }
+
+    if (!winner) {
       setFormMsg({
         type: 'danger',
         hidden: false,
@@ -109,15 +169,7 @@ export default function ClaimMiningRewards() {
       setLoading(false);
       return;
     }
-    // verify user can claim mining reward
-    const canClaim = await canClaimMiningReward(version, currentCity.data, block, stxAddress.data);
-    if (canClaim) {
-      setFormMsg({
-        type: 'success',
-        hidden: false,
-        text: 'Can claim reward, sending claim transaction.',
-      });
-    } else {
+    if (!canClaim) {
       setFormMsg({
         type: 'danger',
         hidden: false,
@@ -126,16 +178,27 @@ export default function ClaimMiningRewards() {
       setLoading(false);
       return;
     }
+    setFormMsg({
+      type: 'success',
+      hidden: false,
+      text: 'Can claim reward, sending claim transaction.',
+    });
     // submit mining claim transaction
-    await claimReward(version, block);
+    await claimReward(cityVersion, block);
   };
 
   const claimReward = async (version, block) => {
+    const citySettings = getCitySettings(currentCity.data, version);
     const targetBlockCV = uintCV(block);
+    console.log(`claiming ${block}!`);
+    console.log(citySettings.config.mining.deployer);
+    console.log(citySettings.config.mining.contractName);
+    console.log(citySettings.config.mining.miningClaimFunction);
+
     await doContractCall({
-      contractAddress: CITY_CONFIG[currentCity.data][version].deployer,
-      contractName: CITY_CONFIG[currentCity.data][version].core.name,
-      functionName: 'claim-mining-reward',
+      contractAddress: citySettings.config.mining.deployer,
+      contractName: citySettings.config.mining.contractName,
+      functionName: citySettings.config.mining.miningClaimFunction,
       functionArgs: [targetBlockCV],
       network: STACKS_NETWORK,
       onCancel: () => {

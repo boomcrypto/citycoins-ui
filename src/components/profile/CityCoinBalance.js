@@ -58,7 +58,7 @@ export default function CityCoinBalance({ balances, symbol, version }) {
 
   return (
     <div className="row">
-      <div className="col-5 text-nowrap text-end">
+      <div className="col-6 text-nowrap text-end">
         {version === 'v2'
           ? displayMicro(balances.data[symbol][version])
           : balances.data[symbol][version].toLocaleString()}
@@ -66,7 +66,7 @@ export default function CityCoinBalance({ balances, symbol, version }) {
       <div className="col-3">
         {symbol.toUpperCase()} ({version})
       </div>
-      <div className="col-4">
+      <div className="col-3">
         {version === 'v1' &&
           (submitted && txId ? (
             <small>

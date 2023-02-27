@@ -17,6 +17,7 @@ import {
   rewardCyclesToClaimAtom,
 } from '../../store/cities';
 import LinkTx from '../common/LinkTx';
+import { capitalizeFirstLetter } from '../../lib/common';
 
 export default function StackingReward({ cycle, version, data }) {
   const { doContractCall } = useConnect();
@@ -98,7 +99,7 @@ export default function StackingReward({ cycle, version, data }) {
               <span className="text-muted">Cycle #</span>
             </div>
             <div className="col">
-              <span className="h5">{version}</span>
+              <span className="h5">{capitalizeFirstLetter(version)}</span>
               <br />
               <span className="text-muted">Version</span>
             </div>

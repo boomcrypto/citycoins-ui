@@ -12,6 +12,11 @@ const throttle = throttledQueue(4, 1000, true);
 // async timer
 export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+// capitalizooooor
+export function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // fetch and return JSON from URL
 export const fetchJson = async url => {
   debugLog(`fetchJson: ${url}`);
