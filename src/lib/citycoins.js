@@ -1,4 +1,7 @@
+import { callReadOnlyFunction, uintCV } from '@stacks/transactions';
+import { getCitySettings } from '../store/citycoins-protocol';
 import { fetchJson, debugLog } from './common';
+import { STACKS_NETWORK } from './stacks';
 
 // using develop branch until next release
 // const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
@@ -132,4 +135,18 @@ export const getStackingReward = async (version, city, cycle, userId) => {
     debugLog(`getStackingReward: ${err}`);
     return undefined;
   }
+};
+
+export const getStackingRewardFromContract = async (version, city, cycle, userId) => {
+  const citySettings = await getCitySettings(city, version);
+  const result = await callReadOnlyFunction({
+    contractAddress: citySettings.config.stacking.deployer,
+    contractName: citySettings.config.stacking.contractName,
+    functionName: 'get-stacking-reward',
+    functionArgs: [uintCV(userId), uintCV(cycle)],
+    network: STACKS_NETWORK,
+    senderAddress: citySettings.config.stacking.deployer,
+  }).catch(() => undefined);
+  console.log(`getStackingRewardFromContract: ${JSON.stringify(result)}`);
+  return result ? +result.value : undefined;
 };

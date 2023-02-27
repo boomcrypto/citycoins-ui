@@ -1,7 +1,11 @@
 import { useAtom } from 'jotai';
 import { RESET } from 'jotai/utils';
 import { Fragment, useMemo, useRef, useState } from 'react';
-import { getStackerAtCycle, getStackingReward } from '../../lib/citycoins';
+import {
+  getStackerAtCycle,
+  getStackingReward,
+  getStackingRewardFromContract,
+} from '../../lib/citycoins';
 import {
   CITY_INFO,
   currentCityAtom,
@@ -151,7 +155,8 @@ export default function ClaimStackingRewards() {
         };
         console.log('legacy', getLegacyVersion());
         // get reward amount
-        stxReward = (await getStackingReward(getLegacyVersion(), currentCity.data, cycle, id)) ?? 0;
+        stxReward =
+          (await getStackingRewardFromContract(version, currentCity.data, cycle, id)) ?? 0;
         console.log('stxReward', stxReward);
         // get CityCoins to return
         const stacker = await getStackerAtCycle(getLegacyVersion(), currentCity.data, cycle, id);
