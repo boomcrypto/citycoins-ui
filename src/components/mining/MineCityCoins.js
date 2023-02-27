@@ -225,7 +225,7 @@ export default function MineCityCoins() {
         One winner is selected randomly, weighted by how much the miner commits against the total
         committed that block.
       </p>
-      {cityMiningStats.updating ? <LoadingSpinner text={`Loading mining data`} /> : <ComingSoon />}
+      {cityMiningStats.updating ? <LoadingSpinner text={`Loading mining data`} /> : null}
       <div className="row flex-col bg-secondary rounded-3 px-3 mt-3">
         <h3 className="mt-3">
           {`Mine ${symbol} `}

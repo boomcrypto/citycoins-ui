@@ -220,11 +220,7 @@ export default function StackCityCoins() {
         </a>
         .
       </p>
-      {cityStackingStats.updating ? (
-        <LoadingSpinner text={`Loading stacking data`} />
-      ) : (
-        <ComingSoon />
-      )}
+      {cityStackingStats.updating ? <LoadingSpinner text={`Loading stacking data`} /> : null}
       <div class="container-fluid">
         <div class="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
           <div class="col-lg-6">
