@@ -25,6 +25,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import DocumentationLink from '../common/DocumentationLink';
 import StackingStats from '../dashboard/StackingStats';
 import { getCitySettings } from '../../store/citycoins-protocol';
+import ComingSoon from '../common/ComingSoon';
 
 export default function StackCityCoins() {
   const { doContractCall } = useConnect();
@@ -222,9 +223,7 @@ export default function StackCityCoins() {
       {cityStackingStats.updating ? (
         <LoadingSpinner text={`Loading stacking data`} />
       ) : (
-        cityStackingStats.data.map(value => (
-          <StackingStats key={`stats-${value.cycle}`} stats={value} />
-        ))
+        <ComingSoon />
       )}
       <div class="container-fluid">
         <div class="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
@@ -282,3 +281,9 @@ export default function StackCityCoins() {
     </div>
   );
 }
+
+/*
+cityStackingStats.data.map(value => (
+  <StackingStats key={`stats-${value.cycle}`} stats={value} />
+))
+*/

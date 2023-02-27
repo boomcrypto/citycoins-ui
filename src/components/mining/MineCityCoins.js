@@ -19,6 +19,7 @@ import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/
 import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from '../dashboard/MiningStats';
 import { getCitySettings } from '../../store/citycoins-protocol';
+import ComingSoon from '../common/ComingSoon';
 
 export default function MineCityCoins() {
   const { doContractCall } = useConnect();
@@ -224,13 +225,7 @@ export default function MineCityCoins() {
         One winner is selected randomly, weighted by how much the miner commits against the total
         committed that block.
       </p>
-      {cityMiningStats.updating ? (
-        <LoadingSpinner text={`Loading mining data`} />
-      ) : (
-        cityMiningStats.data.map(value => (
-          <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
-        ))
-      )}
+      {cityMiningStats.updating ? <LoadingSpinner text={`Loading mining data`} /> : <ComingSoon />}
       <div className="row flex-col bg-secondary rounded-3 px-3 mt-3">
         <h3 className="mt-3">
           {`Mine ${symbol} `}
@@ -379,3 +374,9 @@ export default function MineCityCoins() {
     </div>
   );
 }
+
+/*
+cityMiningStats.data.map(value => (
+  <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
+))
+*/
