@@ -132,7 +132,7 @@ const daoV1 = city => {
   };
   return {
     mining: {
-      deployer: 'SP1XQXW9JNQ1W4A7PYTN3HCHPEY7SHM6KP98H3NCY',
+      deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
       contractName: 'ccd006-citycoin-mining',
       miningFunction: 'mine',
       miningClaimFunction: 'claim-mining-reward',
@@ -142,7 +142,7 @@ const daoV1 = city => {
       shutdownBlock: undefined,
     },
     stacking: {
-      deployer: 'SP1XQXW9JNQ1W4A7PYTN3HCHPEY7SHM6KP98H3NCY',
+      deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
       contractName: 'ccd007-city-stacking',
       stackingFunction: 'stack',
       stackingClaimFunction: 'claim-stacking-reward',
