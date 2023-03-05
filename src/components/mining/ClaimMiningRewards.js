@@ -129,7 +129,7 @@ export default function ClaimMiningRewards() {
       const cityIdUrl = new URL(
         'https://protocol.citycoins.co/api/ccd004-city-registry/get-city-id'
       );
-      cityIdUrl.searchParams.append('city', currentCity.data);
+      cityIdUrl.searchParams.append('cityName', currentCity.data);
       const cityIdResult = await fetchJson(cityIdUrl).catch(() => undefined);
       if (!cityIdResult) {
         setFormMsg({
@@ -157,7 +157,7 @@ export default function ClaimMiningRewards() {
         return;
       }
       winner = blockWinnerResult.winner;
-      canClaim = blockWinnerResult.canClaim;
+      canClaim = !blockWinnerResult.claimed;
     }
 
     if (!winner) {
