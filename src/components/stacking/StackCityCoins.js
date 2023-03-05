@@ -221,7 +221,13 @@ export default function StackCityCoins() {
         </a>
         .
       </p>
-      {cityStackingStats.updating ? <LoadingSpinner text={`Loading stacking data`} /> : null}
+      {cityStackingStats.updating ? (
+        <LoadingSpinner text={`Loading stacking data`} />
+      ) : (
+        cityStackingStats.data.map(value => (
+          <StackingStats key={`stats-${value.cycle}`} stats={value} />
+        ))
+      )}
       <div class="container-fluid">
         <div class="row flex-col bg-secondary rounded-3 px-3 pb-3 mt-3">
           <div class="col-lg-6">
@@ -278,9 +284,3 @@ export default function StackCityCoins() {
     </div>
   );
 }
-
-/*
-cityStackingStats.data.map(value => (
-  <StackingStats key={`stats-${value.cycle}`} stats={value} />
-))
-*/
