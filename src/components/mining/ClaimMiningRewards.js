@@ -160,7 +160,6 @@ export default function ClaimMiningRewards() {
       winner = blockWinnerResult.winner;
       canClaim = !blockWinnerResult.claimed;
     }
-
     if (!winner) {
       setFormMsg({
         type: 'danger',
@@ -189,12 +188,13 @@ export default function ClaimMiningRewards() {
   };
 
   const claimReward = async (version, block) => {
-    const citySettings = getCitySettings(currentCity.data, version);
+    const citySettings = await getCitySettings(currentCity.data, version);
+    //console.log(`citySettings: ${citySettings}`);
     const targetBlockCV = uintCV(block);
-    console.log(`claiming ${block}!`);
-    console.log(citySettings.config.mining.deployer);
-    console.log(citySettings.config.mining.contractName);
-    console.log(citySettings.config.mining.miningClaimFunction);
+    //console.log(`claiming ${block}!`);
+    //console.log(citySettings.config.mining.deployer);
+    //console.log(citySettings.config.mining.contractName);
+    //console.log(citySettings.config.mining.miningClaimFunction);
 
     await doContractCall({
       contractAddress: citySettings.config.mining.deployer,
