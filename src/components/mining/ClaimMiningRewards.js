@@ -141,12 +141,13 @@ export default function ClaimMiningRewards() {
         return;
       }
       // call new isBlockWinner, set from object
-      const blockWinnerUrl =
-        'https://protocol.citycoins.co/api/ccd006-citycoin-mining/is-block-winner';
+      const blockWinnerUrl = new URL(
+        'https://protocol.citycoins.co/api/ccd006-citycoin-mining/is-block-winner'
+      );
       blockWinnerUrl.searchParams.append('cityId', cityIdResult);
       blockWinnerUrl.searchParams.append('claimHeight', block);
       blockWinnerUrl.searchParams.append('user', stxAddress.data);
-      const blockWinnerResult = await fetchJson(blockWinnerUrl).catch(() => undefined);
+      const blockWinnerResult = await fetchJson(blockWinnerUrl.toString()).catch(() => undefined);
       if (!blockWinnerResult) {
         setFormMsg({
           type: 'danger',
