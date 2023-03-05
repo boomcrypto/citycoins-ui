@@ -39,8 +39,6 @@ export default function MiningActivity() {
   ]);
 
   useEffect(() => {
-    // temporarily disable
-    return;
     // async getter for the data per block
     const fetchMiningStats = async (block, distance) => {
       /*
@@ -56,10 +54,17 @@ export default function MiningActivity() {
         }&height=${block}`
       );
       stats.blockHeight = block;
+      /*
       const reward = await getCoinbaseAmount(
         CITY_INFO[currentCity.data].currentVersion,
         currentCity.data,
         block
+      );
+      */
+      const reward = await fetchJson(
+        `https://protocol.citycoins.co/api/ccd006-citycoin-mining/get-coinbase-amount?cityId=${
+          cityIds[currentCity.data]
+        }&height=${block}`
       );
       stats.rewardAmount = reward;
       setMiningStatsPerCity(prev => {
@@ -106,13 +111,17 @@ export default function MiningActivity() {
         currentCity.loaded ? CITY_INFO[currentCity.data].symbol.toString() + ' ' : ''
       }Mining Activity`}</h3>
       <CurrentStacksBlock />
-      {cityMiningStats.updating ? <LoadingSpinner text={`Loading mining data`} /> : <ComingSoon />}
+      {cityMiningStats.updating ? (
+        <LoadingSpinner text={`Loading mining data`} />
+      ) : (
+        cityMiningStats.data.map(value => (
+          <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
+        ))
+      )}
     </div>
   );
 }
 
 /*
-cityMiningStats.data.map(value => (
-  <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
-))
+
 */

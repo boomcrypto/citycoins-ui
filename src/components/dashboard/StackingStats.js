@@ -47,12 +47,14 @@ export default function StackingStats({ stats }) {
         <div className="col col-md-5">
           <div className="row flex-column flex-sm-row">
             <div className="col">
-              <span className="h5">{fromMicro(stats.amountToken).toLocaleString()}</span>
+              <span className="h5">{fromMicro(stats.total).toLocaleString()}</span>
               <br />
               <span className="text-muted">{symbol} Stacked</span>
             </div>
             <div className="col">
-              <span className="h5">{displayMicro(stats.amountUstx, '')}</span>
+              <span className="h5">
+                {stats.reward ? displayMicro(stats.reward, 'STX') : 'Pending'}
+              </span>
               <br />
               <span className="text-muted">STX Rewards</span>
             </div>

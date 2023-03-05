@@ -13,12 +13,17 @@ import CurrentRewardCycle from '../common/CurrentRewardCycle';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from './StackingStats';
 import ComingSoon from '../common/ComingSoon';
+import { fetchJson } from '../../lib/common';
+import { cityIdsAtom } from '../../store/citycoins-protocol';
 
 export default function StackingActivity() {
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
   const [currentRewardCycle] = useAtom(currentRewardCycleAtom);
   const [currentCity] = useAtom(currentCityAtom);
+  const [cityIds] = useAtom(cityIdsAtom);
   const [stackingStatsPerCity, setStackingStatsPerCity] = useAtom(stackingStatsPerCityAtom);
+
+  const firstProtocolCycle = 54;
 
   const cityStackingStats = useMemo(() => {
     if (currentCity.loaded) {
@@ -43,29 +48,65 @@ export default function StackingActivity() {
   ]);
 
   useEffect(() => {
-    // temporarily disable
-    return;
     // async getter for the data per cycle
     const fetchStackingStats = async (cycle, distance) => {
+      console.log('fetchStackingStats', cycle, distance);
+      // get city ID
+      const cityId = cityIds[currentCity.data];
+      console.log('cityId', cityId);
+      /*
       const stats = await getStackingStatsAtCycle(
         CITY_INFO[currentCity.data].currentVersion,
         currentCity.data,
         cycle
       );
-      stats.cycle = +cycle;
+      */
+      let stats;
+      if (cycle < firstProtocolCycle) {
+        stats = {
+          cycle: cycle,
+          reward: 'N/A',
+          total: 0,
+        };
+      } else {
+        // {"reward":null | number,"total":number}
+        stats = await fetchJson(
+          `https://protocol.citycoins.co/api/ccd007-citycoin-stacking/get-stacking-stats?cityId=${cityId}&cycle=${cycle}`
+        );
+        stats.cycle = +cycle;
+      }
+
+      /*
       const startBlock = await getFirstStacksBlockInRewardCycle(
         CITY_INFO[currentCity.data].currentVersion,
         currentCity.data,
         cycle
       );
-      stats.startBlock = +startBlock;
+      */
+      if (cycle < firstProtocolCycle) {
+        stats.startBlock = 0;
+      } else {
+        const startBlock = await fetchJson(
+          `https://protocol.citycoins.co/api/ccd007-citycoin-stacking/get-first-block-in-reward-cycle?cityId=${cityId}&cycle=${cycle}`
+        );
+        stats.startBlock = +startBlock;
+      }
+      // need BTC block here
       const currentBlock = currentStacksBlock.data;
+      /*
       stats.progress =
         startBlock > currentBlock
           ? 'Future'
           : currentBlock - startBlock < REWARD_CYCLE_LENGTH
           ? (((currentBlock - startBlock) / REWARD_CYCLE_LENGTH) * 100).toFixed(2) + '%'
           : 'Complete';
+          */
+      if (cycle < firstProtocolCycle) {
+        stats.progress = 'N/A';
+      } else {
+        stats.progress = 'TBD';
+      }
+      console.log('stats', stats);
       setStackingStatsPerCity(prev => {
         // copy of full object
         const newStats = { ...prev };
@@ -73,6 +114,7 @@ export default function StackingActivity() {
         const newCityStats = newStats[currentCity.data];
         newCityStats.data.push(stats);
         newCityStats.data.sort((a, b) => a.cycle - b.cycle);
+        console.log('distance', distance, 'newCityStats.data.length', newCityStats.data.length);
         newCityStats.updating = distance === +newCityStats.data.length ? false : true;
         // rewrite city object in full object
         newStats[currentCity.data] = newCityStats;
@@ -114,14 +156,14 @@ export default function StackingActivity() {
       {cityStackingStats.updating ? (
         <LoadingSpinner text={`Loading stacking data`} />
       ) : (
-        <ComingSoon />
+        cityStackingStats.data.map(value => (
+          <StackingStats key={`stats-${value.cycle}`} stats={value} />
+        ))
       )}
     </div>
   );
 }
 
 /*
-cityStackingStats.data.map(value => (
-  <StackingStats key={`stats-${value.cycle}`} stats={value} />
-))
+
 */
