@@ -39,7 +39,7 @@ export default function MiningStats({ stats }) {
         <div className="col">
           <div className="row flex-column flex-sm-row">
             <div className="col">
-              <span className="h5">{stats.minersCount}</span>
+              <span className="h5">{stats.miners}</span>
               <br />
               <span className="text-muted">Miners</span>
             </div>
