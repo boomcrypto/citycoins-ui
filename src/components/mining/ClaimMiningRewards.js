@@ -129,7 +129,7 @@ export default function ClaimMiningRewards() {
       const cityIdUrl = new URL(
         'https://protocol.citycoins.co/api/ccd004-city-registry/get-city-id'
       );
-      cityIdUrl.searchParams.append('city', currentCity.data);
+      cityIdUrl.searchParams.append('cityName', currentCity.data);
       const cityIdResult = await fetchJson(cityIdUrl).catch(() => undefined);
       if (!cityIdResult) {
         setFormMsg({
@@ -141,12 +141,13 @@ export default function ClaimMiningRewards() {
         return;
       }
       // call new isBlockWinner, set from object
-      const blockWinnerUrl =
-        'https://protocol.citycoins.co/api/ccd006-citycoin-mining/is-block-winner';
+      const blockWinnerUrl = new URL(
+        'https://protocol.citycoins.co/api/ccd006-citycoin-mining/is-block-winner'
+      );
       blockWinnerUrl.searchParams.append('cityId', cityIdResult);
       blockWinnerUrl.searchParams.append('claimHeight', block);
       blockWinnerUrl.searchParams.append('user', stxAddress.data);
-      const blockWinnerResult = await fetchJson(blockWinnerUrl).catch(() => undefined);
+      const blockWinnerResult = await fetchJson(blockWinnerUrl.toString()).catch(() => undefined);
       if (!blockWinnerResult) {
         setFormMsg({
           type: 'danger',
@@ -157,9 +158,8 @@ export default function ClaimMiningRewards() {
         return;
       }
       winner = blockWinnerResult.winner;
-      canClaim = blockWinnerResult.canClaim;
+      canClaim = !blockWinnerResult.claimed;
     }
-
     if (!winner) {
       setFormMsg({
         type: 'danger',
@@ -188,12 +188,13 @@ export default function ClaimMiningRewards() {
   };
 
   const claimReward = async (version, block) => {
-    const citySettings = getCitySettings(currentCity.data, version);
+    const citySettings = await getCitySettings(currentCity.data, version);
+    //console.log(`citySettings: ${citySettings}`);
     const targetBlockCV = uintCV(block);
-    console.log(`claiming ${block}!`);
-    console.log(citySettings.config.mining.deployer);
-    console.log(citySettings.config.mining.contractName);
-    console.log(citySettings.config.mining.miningClaimFunction);
+    //console.log(`claiming ${block}!`);
+    //console.log(citySettings.config.mining.deployer);
+    //console.log(citySettings.config.mining.contractName);
+    //console.log(citySettings.config.mining.miningClaimFunction);
 
     await doContractCall({
       contractAddress: citySettings.config.mining.deployer,

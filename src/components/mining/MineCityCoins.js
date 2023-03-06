@@ -69,6 +69,7 @@ export default function MineCityCoins() {
       text: '',
       txId: '',
     });
+    if (numberOfBlocks > 200) numberOfBlocks = 200;
     if (numberOfBlocks > 1) {
       for (let i = 1; i < numberOfBlocks + 1; i++) {
         setBlockAmounts(currentBlock => [
@@ -244,9 +245,10 @@ export default function MineCityCoins() {
               placeholder="Number of Blocks to Mine?"
               ref={mineManyRef}
               onChange={event => {
-                setNumberOfBlocks(parseInt(event.target.value.trim()));
+                const value = parseInt(event.target.value.trim());
+                setNumberOfBlocks(value > 200 ? 200 : value);
                 setBlockAmounts([]);
-                updateValue(parseInt(event.target.value.trim()));
+                updateValue(value > 200 ? 200 : value);
               }}
               value={numberOfBlocks}
               type="number"
