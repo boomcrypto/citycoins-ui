@@ -8,7 +8,7 @@ import DocumentationLink from '../common/DocumentationLink';
 import { currentStacksBlockAtom, stxAddressAtom } from '../../store/stacks';
 import { CITY_CONFIG, CITY_INFO, currentCityAtom } from '../../store/cities';
 import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
-import { uintCV } from '@stacks/transactions';
+import { stringAsciiCV, uintCV } from '@stacks/transactions';
 import { STACKS_NETWORK } from '../../lib/stacks';
 import { getCitySettings, getVersionByBlock } from '../../store/citycoins-protocol';
 import { fetchJson } from '../../lib/common';
@@ -195,12 +195,14 @@ export default function ClaimMiningRewards() {
     //console.log(citySettings.config.mining.deployer);
     //console.log(citySettings.config.mining.contractName);
     //console.log(citySettings.config.mining.miningClaimFunction);
+    const legacy = version.includes('legacy');
+    const args = legacy ? [targetBlockCV] : [stringAsciiCV(citySettings.info.name), targetBlockCV];
 
     await doContractCall({
       contractAddress: citySettings.config.mining.deployer,
       contractName: citySettings.config.mining.contractName,
       functionName: citySettings.config.mining.miningClaimFunction,
-      functionArgs: [targetBlockCV],
+      functionArgs: args,
       network: STACKS_NETWORK,
       onCancel: () => {
         setLoading(false);
