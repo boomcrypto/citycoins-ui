@@ -130,6 +130,16 @@ const daoV1 = city => {
         return undefined;
     }
   };
+  const claimContract = city => {
+    switch (city) {
+      case 'mia':
+        return 'ccd002-treasury-mia-stacking';
+      case 'nyc':
+        return 'ccd002-treasury-nyc-stacking';
+      default:
+        return undefined;
+    }
+  };
   return {
     mining: {
       deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
@@ -146,6 +156,7 @@ const daoV1 = city => {
       contractName: 'ccd007-citycoin-stacking',
       stackingFunction: 'stack',
       stackingClaimFunction: 'claim-stacking-reward',
+      stackingClaimContract: claimContract(city),
       startCycle: 54,
       endCycle: undefined,
     },
@@ -172,6 +183,7 @@ const MIA_CONFIG = {
       contractName: 'miamicoin-core-v1',
       stackingFunction: 'stack-tokens',
       stackingClaimFunction: 'claim-stacking-reward',
+      stackingClaimContract: 'miamicoin-core-v1',
       startCycle: 1,
       endCycle: 16,
     },
@@ -193,6 +205,7 @@ const MIA_CONFIG = {
       contractName: 'miamicoin-core-v2',
       stackingFunction: 'stack-tokens',
       stackingClaimFunction: 'claim-stacking-reward',
+      stackingClaimContract: 'miamicoin-core-v2',
       startCycle: 17,
       endCycle: 34,
     },
@@ -220,6 +233,7 @@ const NYC_CONFIG = {
       contractName: 'newyorkcitycoin-core-v1',
       stackingFunction: 'stack-tokens',
       stackingClaimFunction: 'claim-stacking-reward',
+      stackingClaimContract: 'newyorkcitycoin-core-v1',
       startCycle: 1,
       endCycle: 10,
     },
@@ -241,6 +255,7 @@ const NYC_CONFIG = {
       contractName: 'newyorkcitycoin-core-v2',
       stackingFunction: 'stack-tokens',
       stackingClaimFunction: 'claim-stacking-reward',
+      stackingClaimContract: 'newyorkcitycoin-core-v2',
       startCycle: 11,
       endCycle: 28,
     },

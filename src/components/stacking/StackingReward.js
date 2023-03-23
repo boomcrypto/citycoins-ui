@@ -46,7 +46,7 @@ export default function StackingReward({ cycle, version, data }) {
       postConditions.push(
         makeContractSTXPostCondition(
           citySettings.config.stacking.deployer,
-          citySettings.config.stacking.contractName,
+          citySettings.config.stacking.stackingClaimContract,
           FungibleConditionCode.Equal,
           amountUstxCV.value
         )
@@ -55,7 +55,7 @@ export default function StackingReward({ cycle, version, data }) {
       postConditions.push(
         makeContractFungiblePostCondition(
           citySettings.config.stacking.deployer,
-          citySettings.config.stacking.contractName,
+          citySettings.config.stacking.stackingClaimContract,
           FungibleConditionCode.Equal,
           amountCityCoinsCV.value,
           createAssetInfo(
