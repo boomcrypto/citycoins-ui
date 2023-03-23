@@ -9,6 +9,7 @@ import {
   uintCV,
   FungibleConditionCode,
   PostConditionMode,
+  stringAsciiCV,
 } from '@stacks/transactions';
 import {
   CITY_CONFIG,
@@ -36,6 +37,9 @@ export default function StackingReward({ cycle, version, data }) {
     const targetCycleCV = uintCV(cycle);
     const amountUstxCV = uintCV(data.stxReward);
     const amountCityCoinsCV = uintCV(data.toReturn);
+    // set arguments
+    const legacy = version.includes('legacy');
+    const args = legacy ? [targetCycleCV] : [stringAsciiCV(citySettings.info.name), targetCycleCV];
     // set post conditions
     let postConditions = [];
     data.stxReward > 0 &&
@@ -66,7 +70,7 @@ export default function StackingReward({ cycle, version, data }) {
       contractAddress: citySettings.config.stacking.deployer,
       contractName: citySettings.config.stacking.contractName,
       functionName: citySettings.config.stacking.stackingClaimFunction,
-      functionArgs: [targetCycleCV],
+      functionArgs: args,
       postConditionMode: PostConditionMode.Deny,
       postConditions: postConditions,
       network: STACKS_NETWORK,
