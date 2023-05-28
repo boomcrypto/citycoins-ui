@@ -1,7 +1,7 @@
 export default function AlertCCIP014() {
   return (
     <div className="container">
-      <div className="alert alert-primary" role="alert">
+      <div className="alert alert-light border border-1 border-dark" role="alert">
         <h4>CCIP-014 Voting is in progress!</h4>
         <p>Quick summary about CCIP-014</p>
         <div className="row flex-column flex-md-row mb-4 mt-4">
