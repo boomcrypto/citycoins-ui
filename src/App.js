@@ -21,6 +21,7 @@ import { useEffect } from 'react';
 import { getBlockHeight } from './lib/stacks';
 import { getRewardCycle } from './lib/citycoins';
 import { fetchJson, sleep } from './lib/common';
+import AlertCCIP014 from './components/common/AlertCCIP014';
 
 export default function App() {
   const { authOptions } = useConnect();
@@ -58,6 +59,7 @@ export default function App() {
         <hr className="cc-divider" />
         <div className="row align-items-center">
           <div className="col">
+            <AlertCCIP014 />
             <Content />
           </div>
         </div>
