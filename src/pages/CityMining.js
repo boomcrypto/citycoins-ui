@@ -5,6 +5,7 @@ import Unauthorized from '../components/common/Unauthorized';
 import { loginStatusAtom } from '../store/stacks';
 import NoCitySelected from '../components/common/NoCitySelected';
 import { currentCityAtom } from '../store/cities';
+import AlertCCIP014 from '../components/common/AlertCCIP014';
 
 export default function CityMining() {
   const [loginStatus] = useAtom(loginStatusAtom);
@@ -14,6 +15,7 @@ export default function CityMining() {
     <NoCitySelected />
   ) : loginStatus ? (
     <>
+      <AlertCCIP014 />
       <MineCityCoins />
       <hr className="cc-divider" />
       <ClaimMiningRewards />

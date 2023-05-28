@@ -5,6 +5,7 @@ import Unauthorized from '../components/common/Unauthorized';
 import { loginStatusAtom } from '../store/stacks';
 import { currentCityAtom } from '../store/cities';
 import NoCitySelected from '../components/common/NoCitySelected';
+import AlertCCIP014 from '../components/common/AlertCCIP014';
 
 export default function CityStacking() {
   const [loginStatus] = useAtom(loginStatusAtom);
@@ -14,6 +15,7 @@ export default function CityStacking() {
     <NoCitySelected />
   ) : loginStatus ? (
     <>
+      <AlertCCIP014 />
       <StackCityCoins />
       <hr className="cc-divider" />
       <ClaimStackingRewards />

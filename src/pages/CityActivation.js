@@ -4,6 +4,7 @@ import NoCitySelected from '../components/common/NoCitySelected';
 import Unauthorized from '../components/common/Unauthorized';
 import { currentCityAtom } from '../store/cities';
 import { loginStatusAtom } from '../store/stacks';
+import AlertCCIP014 from '../components/common/AlertCCIP014';
 
 export default function CityActivation() {
   const [loginStatus] = useAtom(loginStatusAtom);
@@ -12,7 +13,10 @@ export default function CityActivation() {
   return !currentCity.loaded ? (
     <NoCitySelected />
   ) : loginStatus ? (
-    <RegisterUser />
+    <>
+      <AlertCCIP014 />
+      <RegisterUser />
+    </>
   ) : (
     <Unauthorized />
   );
