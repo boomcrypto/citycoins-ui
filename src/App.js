@@ -21,6 +21,7 @@ import { useEffect } from 'react';
 import { getBlockHeight } from './lib/stacks';
 import { getRewardCycle } from './lib/citycoins';
 import { fetchJson, sleep } from './lib/common';
+import Vote from './pages/Vote';
 
 export default function App() {
   const { authOptions } = useConnect();
@@ -111,6 +112,7 @@ function Content() {
       <Mining path="/mining" />
       <Stacking path="/stacking" />
       <Tools path="/tools" />
+      <Vote path="/vote" />
       <NotFound default />
     </Router>
   );
