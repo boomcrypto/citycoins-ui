@@ -8,7 +8,7 @@ import { atom } from 'jotai';
 // CITY INFO
 /////////////////////////
 
-const VERSIONS = ['legacyV1', 'legacyV2', 'daoV1'];
+const VERSIONS = ['legacyV1', 'legacyV2', 'daoV1', 'daoV2'];
 
 const MIA_INFO = {
   name: 'mia',
@@ -18,7 +18,7 @@ const MIA_INFO = {
   background: MiamiCoinBG,
   textColor: 'text-dark',
   versions: VERSIONS,
-  currentVersion: 'daoV1',
+  currentVersion: 'daoV2',
 };
 
 const NYC_INFO = {
@@ -29,7 +29,7 @@ const NYC_INFO = {
   background: NewYorkCityCoinBG,
   textColor: 'text-dark',
   versions: VERSIONS,
-  currentVersion: 'daoV1',
+  currentVersion: 'daoV2',
 };
 
 const CITY_INFO = {
@@ -119,6 +119,53 @@ const nycTokenV2 = {
 
 // create object for v1 of the DAO
 
+const daoV2 = city => {
+  const token = city => {
+    switch (city) {
+      case 'mia':
+        return miaTokenV2;
+      case 'nyc':
+        return nycTokenV2;
+      default:
+        return undefined;
+    }
+  };
+  const claimContract = city => {
+    switch (city) {
+      case 'mia':
+        return 'ccd002-treasury-mia-stacking';
+      case 'nyc':
+        return 'ccd002-treasury-nyc-stacking';
+      default:
+        return undefined;
+    }
+  };
+  return {
+    mining: {
+      deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
+      contractName: 'ccd006-citycoin-mining-v2',
+      miningFunction: 'mine',
+      miningClaimFunction: 'claim-mining-reward',
+      activated: true,
+      activationBlock: 105300, // TODO: set to when proposal passes
+      shutdown: false,
+      shutdownBlock: undefined,
+    },
+    stacking: {
+      deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
+      contractName: 'ccd007-citycoin-stacking',
+      stackingFunction: 'stack',
+      stackingClaimFunction: 'claim-stacking-reward',
+      stackingClaimContract: claimContract(city),
+      startCycle: 54,
+      endCycle: undefined,
+    },
+    token: token(city),
+  };
+};
+
+// create object for v1 of the DAO
+
 const daoV1 = city => {
   const token = city => {
     switch (city) {
@@ -148,8 +195,8 @@ const daoV1 = city => {
       miningClaimFunction: 'claim-mining-reward',
       activated: true,
       activationBlock: 96779,
-      shutdown: false,
-      shutdownBlock: undefined,
+      shutdown: true,
+      shutdownBlock: 105300,
     },
     stacking: {
       deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
@@ -212,6 +259,7 @@ const MIA_CONFIG = {
     token: miaTokenV2,
   },
   daoV1: daoV1('mia'),
+  daoV2: daoV2('mia'),
 };
 
 // create object for NYC configuration
@@ -262,6 +310,7 @@ const NYC_CONFIG = {
     token: nycTokenV2,
   },
   daoV1: daoV1('nyc'),
+  daoV2: daoV2('nyc'),
 };
 
 // combine both city configs as one object
