@@ -147,7 +147,7 @@ const daoV2 = city => {
       miningFunction: 'mine',
       miningClaimFunction: 'claim-mining-reward',
       activated: true,
-      activationBlock: 105300, // TODO: set to when proposal passes
+      activationBlock: 107389,
       shutdown: false,
       shutdownBlock: undefined,
     },
@@ -196,7 +196,7 @@ const daoV1 = city => {
       activated: true,
       activationBlock: 96779,
       shutdown: true,
-      shutdownBlock: 105300,
+      shutdownBlock: 107389,
     },
     stacking: {
       deployer: 'SP8A9HZ3PKST0S42VM9523Z9NV42SZ026V4K39WH',
