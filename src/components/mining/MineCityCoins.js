@@ -1,25 +1,24 @@
-import { useMemo, useRef, useState } from 'react';
-import { useAtom } from 'jotai';
 import { useConnect } from '@stacks/connect-react';
 import {
   FungibleConditionCode,
+  PostConditionMode,
   listCV,
   makeStandardSTXPostCondition,
-  PostConditionMode,
   stringAsciiCV,
   uintCV,
 } from '@stacks/transactions';
+import { useAtom } from 'jotai';
+import { useMemo, useRef, useState } from 'react';
+import { STACKS_NETWORK, displayMicro } from '../../lib/stacks';
+import { stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import DocumentationLink from '../common/DocumentationLink';
 import FormResponse from '../common/FormResponse';
-import { displayMicro, STACKS_NETWORK } from '../../lib/stacks';
-import { stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 
 import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
+import { getCitySettings } from '../../store/citycoins-protocol';
 import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from '../dashboard/MiningStats';
-import { getCitySettings } from '../../store/citycoins-protocol';
-import ComingSoon from '../common/ComingSoon';
 
 export default function MineCityCoins() {
   const { doContractCall } = useConnect();

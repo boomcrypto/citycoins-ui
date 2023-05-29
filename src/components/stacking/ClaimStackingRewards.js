@@ -3,9 +3,9 @@ import { RESET } from 'jotai/utils';
 import { Fragment, useMemo, useRef, useState } from 'react';
 import {
   getStackerAtCycle,
-  getStackingReward,
-  getStackingRewardFromContract,
+  getStackingRewardFromContract
 } from '../../lib/citycoins';
+import { fetchJson } from '../../lib/common';
 import {
   CITY_INFO,
   currentCityAtom,
@@ -13,14 +13,13 @@ import {
   rewardCyclesToClaimAtom,
   userIdAtom,
 } from '../../store/cities';
+import { cityIdsAtom, getCityInfo } from '../../store/citycoins-protocol';
 import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentRewardCycle from '../common/CurrentRewardCycle';
+import DocumentationLink from '../common/DocumentationLink';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
-import DocumentationLink from '../common/DocumentationLink';
 import StackingReward from './StackingReward';
-import { cityIdsAtom, getCityInfo } from '../../store/citycoins-protocol';
-import { fetchJson } from '../../lib/common';
 
 export default function ClaimStackingRewards() {
   const [userIds] = useAtom(userIdAtom);

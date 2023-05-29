@@ -1,20 +1,17 @@
 import { useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
-import { getFirstStacksBlockInRewardCycle, getStackingStatsAtCycle } from '../../lib/citycoins';
+import { fetchJson } from '../../lib/common';
 import {
   CITY_INFO,
-  REWARD_CYCLE_LENGTH,
   currentCityAtom,
   currentRewardCycleAtom,
   stackingStatsPerCityAtom,
 } from '../../store/cities';
+import { cityIdsAtom } from '../../store/citycoins-protocol';
 import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentRewardCycle from '../common/CurrentRewardCycle';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from './StackingStats';
-import ComingSoon from '../common/ComingSoon';
-import { fetchJson } from '../../lib/common';
-import { cityIdsAtom } from '../../store/citycoins-protocol';
 
 export default function StackingActivity() {
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
@@ -145,6 +142,7 @@ export default function StackingActivity() {
     currentStacksBlock.data,
     setStackingStatsPerCity,
     updateStackingStats,
+    cityIds,
   ]);
 
   return (

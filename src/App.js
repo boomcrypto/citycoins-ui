@@ -1,27 +1,25 @@
-import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
-import { useConnect } from './lib/auth';
-import Landing from './pages/Landing';
-import NotFound from './pages/NotFound';
+import { Connect } from '@stacks/connect-react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
+import CityMenu from './components/layout/CityMenu';
+import Footer from './components/layout/Footer';
+import HeaderAuth from './components/layout/HeaderAuth';
 import HeaderLogo from './components/layout/HeaderLogo';
 import HeaderTitle from './components/layout/HeaderTitle';
-import CityMenu from './components/layout/CityMenu';
-import HeaderAuth from './components/layout/HeaderAuth';
-import Footer from './components/layout/Footer';
+import { useConnect } from './lib/auth';
+import { fetchJson, sleep } from './lib/common';
+import { getBlockHeight } from './lib/stacks';
 import Activation from './pages/CityActivation';
 import Dashboard from './pages/CityDashboard';
 import Mining from './pages/CityMining';
 import Stacking from './pages/CityStacking';
 import Tools from './pages/CityTools';
-import { useAtom } from 'jotai';
-import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from './store/cities';
-import { useUpdateAtom } from 'jotai/utils';
-import { currentStacksBlockAtom } from './store/stacks';
-import { useEffect } from 'react';
-import { getBlockHeight } from './lib/stacks';
-import { getRewardCycle } from './lib/citycoins';
-import { fetchJson, sleep } from './lib/common';
+import Landing from './pages/Landing';
+import NotFound from './pages/NotFound';
 import Vote from './pages/Vote';
+import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from './store/cities';
+import { currentStacksBlockAtom } from './store/stacks';
 
 export default function App() {
   const { authOptions } = useConnect();
@@ -77,8 +75,8 @@ export default function App() {
 
 function Content() {
   const [currentCity] = useAtom(currentCityAtom);
-  const setBlockHeight = useUpdateAtom(currentStacksBlockAtom);
-  const setRewardCycle = useUpdateAtom(currentRewardCycleAtom);
+  const setBlockHeight = useSetAtom(currentStacksBlockAtom);
+  const setRewardCycle = useSetAtom(currentRewardCycleAtom);
 
   useEffect(() => {
     const updatePage = async () => {
