@@ -1,8 +1,8 @@
-import { AppConfig } from '@stacks/auth';
 import { Storage } from '@stacks/storage';
 import { addressToString } from '@stacks/transactions';
 import { getStacksAccount } from './lib/account';
 import { debugLog } from './lib/common';
+import { AppConfig } from '@stacks/connect';
 
 export const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const STX_JSON_PATH = 'stx.json';

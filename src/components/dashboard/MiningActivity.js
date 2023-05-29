@@ -1,6 +1,5 @@
 import { useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
-import { getCoinbaseAmount, getMiningStatsAtBlock } from '../../lib/citycoins';
 import { fetchJson } from '../../lib/common';
 import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
 import { cityIdsAtom } from '../../store/citycoins-protocol';
@@ -8,7 +7,6 @@ import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from './MiningStats';
-import ComingSoon from '../common/ComingSoon';
 
 export default function MiningActivity() {
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);

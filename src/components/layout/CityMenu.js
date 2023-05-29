@@ -5,11 +5,11 @@ import {
   CITY_INFO,
   CITY_LIST,
   CITY_ROUTES,
-  currentRouteAtom,
   currentCityAtom,
+  currentRewardCycleAtom,
+  currentRouteAtom,
   miningStatsAtom,
   stackingStatsAtom,
-  currentRewardCycleAtom,
 } from '../../store/cities';
 
 export default function CityMenu({ menuName }) {
