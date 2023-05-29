@@ -17,6 +17,7 @@ import Stacking from './pages/CityStacking';
 import Tools from './pages/CityTools';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
+import Vote from './pages/Vote';
 import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from './store/cities';
 import { currentStacksBlockAtom } from './store/stacks';
 
@@ -109,6 +110,7 @@ function Content() {
       <Mining path="/mining" />
       <Stacking path="/stacking" />
       <Tools path="/tools" />
+      <Vote path="/vote" />
       <NotFound default />
     </Router>
   );
