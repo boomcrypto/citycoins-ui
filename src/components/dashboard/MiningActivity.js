@@ -1,6 +1,5 @@
 import { useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
-import { getCoinbaseAmount, getMiningStatsAtBlock } from '../../lib/citycoins';
 import { fetchJson } from '../../lib/common';
 import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
 import { cityIdsAtom } from '../../store/citycoins-protocol';
@@ -8,7 +7,6 @@ import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from './MiningStats';
-import ComingSoon from '../common/ComingSoon';
 
 export default function MiningActivity() {
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
@@ -19,9 +17,7 @@ export default function MiningActivity() {
   const cityMiningStats = useMemo(() => {
     if (currentCity.loaded) {
       const key = currentCity.data;
-      if (miningStatsPerCity[key]) {
-        return miningStatsPerCity[key];
-      }
+      return miningStatsPerCity[key];
     }
     return undefined;
   }, [currentCity.loaded, currentCity.data, miningStatsPerCity]);
@@ -41,32 +37,23 @@ export default function MiningActivity() {
   useEffect(() => {
     // async getter for the data per block
     const fetchMiningStats = async (block, distance) => {
-      /*
-      const stats = await getMiningStatsAtBlock(
-        CITY_INFO[currentCity.data].currentVersion,
-        currentCity.data,
-        block
-      );
-      */
-      const stats = await fetchJson(
-        `https://protocol.citycoins.co/api/ccd006-citycoin-mining/get-mining-stats?cityId=${
+      // Fetch data for a specific block
+      const statsPromise = fetchJson(
+        `https://protocol.citycoins.co/api/ccd006-citycoin-mining-v2/get-mining-stats?cityId=${
           cityIds[currentCity.data]
         }&height=${block}`
       );
+      const rewardPromise = fetchJson(
+        `https://protocol.citycoins.co/api/ccd006-citycoin-mining-v2/get-coinbase-amount?cityId=${
+          cityIds[currentCity.data]
+        }&height=${block}`
+      );
+      const [stats, reward] = await Promise.all([statsPromise, rewardPromise]);
       stats.blockHeight = block;
-      /*
-      const reward = await getCoinbaseAmount(
-        CITY_INFO[currentCity.data].currentVersion,
-        currentCity.data,
-        block
-      );
-      */
-      const reward = await fetchJson(
-        `https://protocol.citycoins.co/api/ccd006-citycoin-mining/get-coinbase-amount?cityId=${
-          cityIds[currentCity.data]
-        }&height=${block}`
-      );
       stats.rewardAmount = reward;
+
+      console.log(`stats for block ${block}\n${JSON.stringify(stats, null, 2)}`);
+
       setMiningStatsPerCity(prev => {
         // copy of full object
         const newStats = { ...prev };
@@ -74,7 +61,7 @@ export default function MiningActivity() {
         const newCityStats = newStats[currentCity.data];
         newCityStats.data.push(stats);
         newCityStats.data.sort((a, b) => a.blockHeight - b.blockHeight);
-        newCityStats.updating = distance === +newCityStats.data.length ? false : true;
+        newCityStats.updating = distance === newCityStats.data.length ? false : true;
         // rewrite city object in full object
         newStats[currentCity.data] = newCityStats;
         return newStats;
@@ -93,9 +80,11 @@ export default function MiningActivity() {
         return newStats;
       });
       // fetch + set new values
+      const fetchPromises = [];
       for (let i = start; i <= end; i++) {
-        fetchMiningStats(i, end - start + 1);
+        fetchPromises.push(fetchMiningStats(i, end - start + 1));
       }
+      Promise.all(fetchPromises);
     }
   }, [
     cityIds,
