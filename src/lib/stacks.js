@@ -62,6 +62,14 @@ export const getBlockHeight = async () => {
   return result.value;
 };
 
+export const getBtcStxBlockHeight = async () => {
+  const url = 'https://api.mainnet.hiro.so/v2/info';
+  const result = await fetchJson(url);
+  const btcHeight = result.burn_block_height;
+  const stxHeight = result.stacks_tip_height;
+  return { btcHeight, stxHeight };
+};
+
 // return the bns name, if found
 export const getBnsName = async address => {
   const result = await fetchJson(`${CC_API_BASE}/stacks/get-bns-name/${address}`).catch(() => {

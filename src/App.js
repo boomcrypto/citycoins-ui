@@ -16,11 +16,10 @@ import Tools from './pages/CityTools';
 import { useAtom } from 'jotai';
 import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from './store/cities';
 import { useUpdateAtom } from 'jotai/utils';
-import { currentStacksBlockAtom } from './store/stacks';
+import { currentBitcoinBlockAtom, currentStacksBlockAtom } from './store/stacks';
 import { useEffect } from 'react';
-import { getBlockHeight } from './lib/stacks';
-import { getRewardCycle } from './lib/citycoins';
-import { fetchJson, sleep } from './lib/common';
+import { getBtcStxBlockHeight } from './lib/stacks';
+import { fetchJson } from './lib/common';
 import Vote from './pages/Vote';
 
 export default function App() {
@@ -77,32 +76,45 @@ export default function App() {
 
 function Content() {
   const [currentCity] = useAtom(currentCityAtom);
-  const setBlockHeight = useUpdateAtom(currentStacksBlockAtom);
+  const setBitcoinBlockHeight = useUpdateAtom(currentBitcoinBlockAtom);
+  const setStacksBlockHeight = useUpdateAtom(currentStacksBlockAtom);
   const setRewardCycle = useUpdateAtom(currentRewardCycleAtom);
 
   useEffect(() => {
     const updatePage = async () => {
-      const blockHeight = await getBlockHeight();
-      setBlockHeight({
+      // fetch and set current block heights
+      const blockHeights = await getBtcStxBlockHeight();
+      console.log('blockHeights', blockHeights);
+      const { btcHeight, stxHeight } = blockHeights;
+      setBitcoinBlockHeight({
         loaded: true,
-        data: +blockHeight,
+        data: +btcHeight,
       });
+      setStacksBlockHeight({
+        loaded: true,
+        data: +stxHeight,
+      });
+      // if city is loaded, fetch and set current reward cycle
       if (currentCity.loaded) {
-        /*
-        const rewardCycle = await getRewardCycle(
-          CITY_INFO[currentCity.data].currentVersion,
-          currentCity.data
-        );
-        */
-        const rewardCycle = await fetchJson(
-          `https://protocol.citycoins.co/api/ccd007-citycoin-stacking/get-current-reward-cycle`
-        ).catch(() => undefined);
-        rewardCycle && setRewardCycle({ loaded: true, data: +rewardCycle });
+        try {
+          const rewardCycle = await fetchJson(
+            `https://protocol.citycoins.co/api/ccd007-citycoin-stacking/get-current-reward-cycle`
+          );
+          setRewardCycle({ loaded: true, data: +rewardCycle });
+        } catch (err) {
+          console.error('error fetching reward cycle', err);
+        }
       }
-      await sleep(1000 * 60); // 60 seconds
+      // run update every 2 minutes
+      const intervalId = setInterval(updatePage, 120 * 1000);
+
+      // clean up function to stop the update loop when the component unmounts
+      return () => {
+        clearInterval(intervalId);
+      };
     };
     updatePage();
-  });
+  }, [currentCity.loaded]);
 
   return (
     <Router>
