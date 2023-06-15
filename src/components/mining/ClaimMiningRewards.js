@@ -142,7 +142,7 @@ export default function ClaimMiningRewards() {
       }
       // call new isBlockWinner, set from object
       const blockWinnerUrl = new URL(
-        'https://protocol.citycoins.co/api/ccd006-citycoin-mining/is-block-winner'
+        'https://protocol.citycoins.co/api/ccd006-citycoin-mining-v2/is-block-winner'
       );
       blockWinnerUrl.searchParams.append('cityId', cityIdResult);
       blockWinnerUrl.searchParams.append('claimHeight', block);
