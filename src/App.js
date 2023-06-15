@@ -84,15 +84,14 @@ function Content() {
     const updatePage = async () => {
       // fetch and set current block heights
       const blockHeights = await getBtcStxBlockHeight();
-      console.log('blockHeights', blockHeights);
-      const { btcHeight, stxHeight } = blockHeights;
+      // console.log('blockHeights', blockHeights);
       setBitcoinBlockHeight({
         loaded: true,
-        data: +btcHeight,
+        data: +blockHeights.btcHeight,
       });
       setStacksBlockHeight({
         loaded: true,
-        data: +stxHeight,
+        data: +blockHeights.stxHeight,
       });
       // if city is loaded, fetch and set current reward cycle
       if (currentCity.loaded) {
