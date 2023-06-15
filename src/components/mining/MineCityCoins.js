@@ -19,7 +19,6 @@ import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/
 import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from '../dashboard/MiningStats';
 import { getCitySettings } from '../../store/citycoins-protocol';
-import ComingSoon from '../common/ComingSoon';
 
 export default function MineCityCoins() {
   const { doContractCall } = useConnect();

@@ -12,7 +12,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { isStringAllDigits } from '../../lib/common';
 import { displayMicro, fromMicro, STACKS_NETWORK, toMicro } from '../../lib/stacks';
 import {
-  CITY_CONFIG,
   CITY_INFO,
   currentCityAtom,
   currentRewardCycleAtom,
@@ -25,7 +24,6 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import DocumentationLink from '../common/DocumentationLink';
 import StackingStats from '../dashboard/StackingStats';
 import { getCitySettings } from '../../store/citycoins-protocol';
-import ComingSoon from '../common/ComingSoon';
 
 export default function StackCityCoins() {
   const { doContractCall } = useConnect();

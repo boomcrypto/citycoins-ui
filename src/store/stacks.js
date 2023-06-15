@@ -7,4 +7,5 @@ export const appStxAddressAtom = atom({ loaded: false, data: '' });
 export const stxBnsNameAtom = atom({ loaded: false, data: '' });
 export const userBalancesAtom = atom({ loaded: false, data: {} });
 
+export const currentBitcoinBlockAtom = atom({ loaded: false, data: 0 });
 export const currentStacksBlockAtom = atom({ loaded: false, data: 0 });
