@@ -47,8 +47,6 @@ export default function StackingActivity() {
     // async getter for the data per cycle
     const fetchStackingStats = async (cycle, distance) => {
       console.log('fetching stacking stats');
-      // temporary fix until proposal passed
-      const missedCycles = [56, 57, 58, 59];
       const cityId = cityIds[currentCity.data];
       const currentBlock = currentBitcoinBlock.data;
       const stats = {
@@ -148,7 +146,3 @@ export default function StackingActivity() {
     </div>
   );
 }
-
-/*
-
-*/

@@ -1,11 +1,7 @@
 import { useAtom } from 'jotai';
 import { RESET } from 'jotai/utils';
 import { Fragment, useMemo, useRef, useState } from 'react';
-import {
-  getStackerAtCycle,
-  getStackingReward,
-  getStackingRewardFromContract,
-} from '../../lib/citycoins';
+import { getStackerAtCycle, getStackingRewardFromContract } from '../../lib/citycoins';
 import {
   CITY_INFO,
   currentCityAtom,

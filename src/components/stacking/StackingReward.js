@@ -11,12 +11,7 @@ import {
   PostConditionMode,
   stringAsciiCV,
 } from '@stacks/transactions';
-import {
-  CITY_CONFIG,
-  CITY_INFO,
-  currentCityAtom,
-  rewardCyclesToClaimAtom,
-} from '../../store/cities';
+import { CITY_INFO, currentCityAtom, rewardCyclesToClaimAtom } from '../../store/cities';
 import LinkTx from '../common/LinkTx';
 import { capitalizeFirstLetter } from '../../lib/common';
 import { getCitySettings } from '../../store/citycoins-protocol';

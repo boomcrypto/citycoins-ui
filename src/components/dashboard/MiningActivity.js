@@ -23,8 +23,11 @@ export default function MiningActivity() {
   }, [currentCity.loaded, currentCity.data, miningStatsPerCity]);
 
   const updateMiningStats = useMemo(() => {
+    console.log('currentStacksBlock.loaded', currentStacksBlock.loaded);
     if (!currentStacksBlock.loaded) return false;
+    console.log('cityMiningStats.updating', cityMiningStats.updating);
     if (cityMiningStats.updating === true) return false;
+    console.log('cityMiningStats.lastUpdated', cityMiningStats.lastUpdated);
     if (cityMiningStats.lastUpdated === currentStacksBlock.data) return false;
     return true;
   }, [
@@ -37,6 +40,7 @@ export default function MiningActivity() {
   useEffect(() => {
     // async getter for the data per block
     const fetchMiningStats = async (block, distance) => {
+      console.log('fetching mining stats');
       // Fetch data for a specific block
       const statsPromise = fetchJson(
         `https://protocol.citycoins.co/api/ccd006-citycoin-mining-v2/get-mining-stats?cityId=${
@@ -67,6 +71,7 @@ export default function MiningActivity() {
         return newStats;
       });
     };
+    console.log('updateMiningStats', updateMiningStats);
     if (updateMiningStats) {
       // check values and perform update if necessary
       const key = currentCity.data;
