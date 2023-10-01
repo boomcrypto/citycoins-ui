@@ -5,7 +5,7 @@ import { STACKS_NETWORK } from './stacks';
 
 // using develop branch until next release
 // const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
-const CC_API_BASE = `https://api.citycoins.co`;
+export const CC_API_BASE = `https://api.citycoins.co`;
 
 // get a city's configuration file
 export const getCityConfig = async (version, city) => {

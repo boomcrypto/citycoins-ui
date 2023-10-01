@@ -7,6 +7,7 @@ import {
 } from '@stacks/blockchain-api-client';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
 import { fetchJson, debugLog } from './common';
+import { CC_API_BASE } from './citycoins';
 
 // TODO: change to URL and switch against chain if it exists
 export const isTestnet = window.location.search.includes('chain=testnet');
@@ -47,8 +48,6 @@ export const transactionsApi = new TransactionsApi(config);
 export const infoApi = new InfoApi(config);
 
 ///////////////////////
-
-const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
 
 export const getStxBalance = async address => {
   const url = `${CC_API_BASE}/stacks/get-stx-balance/${address}`;
